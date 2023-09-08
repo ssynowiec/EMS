@@ -1,0 +1,6 @@
+node_modules
+**/.next
+**/.turbo
+next.config.js
+packages/generated
+pnpm-lock.yaml
