@@ -1,7 +1,10 @@
+import { Button } from 'ui';
+
 const IndexPage = () => {
 	return (
 		<div>
-			<h1>Index Page</h1>
+			<h1 className="text-red-500">Index Page</h1>
+			<Button />
 		</div>
 	);
 };
