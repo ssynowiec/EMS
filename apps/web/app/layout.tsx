@@ -2,6 +2,9 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { Provider } from '../components/provider/Provider';
+import { authOptions } from './api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth/next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,10 +17,17 @@ type RootLayoutProps = {
 	children: ReactNode;
 };
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+const RootLayout = async ({ children }: RootLayoutProps) => {
+	const session = await getServerSession(authOptions);
+
 	return (
-		<html lang="en">
-			<body className={inter.className}>{children}</body>
+		<html lang="en" className="light bg-lightBlue">
+			<body className={inter.className}>
+				<Provider session={session}>{children}</Provider>
+				{/*<Footer />*/}
+			</body>
 		</html>
 	);
 };
