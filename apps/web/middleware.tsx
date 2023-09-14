@@ -5,6 +5,9 @@ import { withAuth } from 'next-auth/middleware';
 const adminPages = ['/admin'];
 
 export default withAuth({
+	pages: {
+		signIn: '/login',
+	},
 	callbacks: {
 		authorized({ req, token }) {
 			// `/admin` requires admin role
@@ -20,5 +23,5 @@ export default withAuth({
 });
 
 export const config = {
-	matcher: ['/admin', '/profile', '/protected', '/dashboard'],
+	matcher: ['/admin'],
 };

@@ -13,12 +13,12 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 		actions: [
 			{
 				type: 'add',
-				path: './components/{{lowerCase name}}/{{pascalCase name}}.tsx',
+				path: './components/{{lowerCase name}}/{{pascalCase name}}.HomeIcon.tsx',
 				templateFile: 'templates/component.hbs',
 			},
 			{
 				type: 'append',
-				path: 'index.tsx',
+				path: 'index.HomeIcon.tsx',
 				template: `export { {{pascalCase name}} } from './components/{{lowerCase name}}/{{pascalCase name}}';\n`,
 			},
 		],

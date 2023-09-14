@@ -1,7 +1,6 @@
 'use client';
 
 import { signOut, useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 import {
 	Dropdown,
 	DropdownItem,
@@ -14,14 +13,10 @@ import {
 	NavbarMenuToggle,
 	User,
 } from '@nextui-org/react';
+import { BellIcon } from 'ui';
 
 export const DashboardNavbar = ({ children }) => {
-	const { data: session } = useSession({
-		required: true,
-		onUnauthenticated() {
-			redirect('/login?callbackUrl=/protected');
-		},
-	});
+	const { data: session } = useSession();
 
 	const isMenuOpen = false;
 
@@ -35,6 +30,7 @@ export const DashboardNavbar = ({ children }) => {
 				</NavbarContent>
 
 				<NavbarContent justify="end">
+					<BellIcon />
 					<Dropdown>
 						<NavbarItem>
 							<DropdownTrigger>
@@ -66,7 +62,7 @@ export const DashboardNavbar = ({ children }) => {
 				</NavbarContent>
 				<Link href="#"></Link>
 			</Navbar>
-			{children}
+			<section className="w-11/12 mx-auto">{children}</section>
 		</div>
 	);
 };

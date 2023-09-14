@@ -7,5 +7,8 @@ export { EyeSlashFilledIcon } from './components/eyeSlashFilledIcon/EyeSlashFill
 export { FacebookIcon } from './components/facebookIcon/FacebookIcon';
 export { GithubIcon } from './components/githubIcon/GithubIcon';
 export { GoogleIcon } from './components/googleIcon/GoogleIcon';
-
+export { HomeIcon } from './components/homeIcon/HomeIcon';
+export { SettingsIcon } from './components/settingsIcon/SettingsIcon';
+export { BellIcon } from './components/bellIcon/BellIcon';
+export { SearchIcon } from './components/searchIcon/SearchIcon';
 export { Footer } from './components/footer/Footer';

@@ -13,21 +13,29 @@ server.post('/user', async (request, reply) => {
 		password: string;
 	};
 
-	// console.log(username, password);
-
 	const user = await prisma.user.findUnique({
 		where: { email: username },
 	});
+
+	console.log(user);
 
 	if (!user) {
 		return reply.status(401).send({ message: 'Invalid email or password' });
 	}
 
-	// if (user.password !== password) {
-	// 	return reply.status(401).send({ message: 'Invalid username or password' });
-	// }
+	if (user.password == undefined) {
+		return reply.status(401).send({ message: 'Please try login with Google' });
+	}
 
-	return reply.send({ user });
+	if (user.password !== password) {
+		return reply.status(401).send({ message: 'Invalid username or password' });
+	}
+
+	return reply.send(user);
+});
+
+server.get('/users', async () => {
+	return await prisma.user.findMany();
 });
 
 // for (const schema of [...userSchemas, ...eventSchemas]) {

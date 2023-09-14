@@ -4,6 +4,16 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL") // Only needed when using a cloud provider that doesn't support the creation of new databases, like Heroku. Learn more: https://pris.ly/d/migrate-shadow
 }
 
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"] // You won't need this in Prisma 3.X or higher.
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -35,6 +45,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  role          Role      @default(USER)
   emailVerified DateTime?
   password      String?
   image         String?

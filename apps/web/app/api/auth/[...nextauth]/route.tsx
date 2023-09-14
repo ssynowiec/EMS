@@ -3,9 +3,17 @@ import Google from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import Facebook from 'next-auth/providers/facebook';
 import Credentials from 'next-auth/providers/credentials';
+import { PrismaClient } from '@prisma/client';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+
+const prisma = new PrismaClient();
 
 export const authOptions = {
+	adapter: PrismaAdapter(prisma),
 	secret: process.env.NEXTAUTH_SECRET as string,
+	session: {
+		strategy: 'jwt',
+	},
 	providers: [
 		Google({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -47,12 +55,14 @@ export const authOptions = {
 				});
 				const user = await res.json();
 
+				console.log(user);
+
 				if (!res.ok) {
 					throw new Error(user.message);
 				}
 
 				if (res.ok && user) {
-					return user.user;
+					return user;
 				}
 
 				return null;

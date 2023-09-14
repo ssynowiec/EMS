@@ -74,8 +74,8 @@ export const CredentialsLoginForm = () => {
 					size="md"
 					isRequired={true}
 					placeholder="**********"
-					validationState={errors.username ? 'invalid' : 'valid'}
-					errorMessage={errors.username?.message}
+					validationState={errors.password ? 'invalid' : 'valid'}
+					errorMessage={errors.password?.message}
 					{...register('password', { required: true })}
 					endContent={
 						<button
