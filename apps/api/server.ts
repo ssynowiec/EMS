@@ -35,6 +35,10 @@ server.post('/user', async (request, reply) => {
 		return reply.status(401).send({ message: 'Please try login with Google' });
 	}
 
+	if (user.emailVerified === null) {
+		return reply.status(400).send({ message: 'Please verify your email' });
+	}
+
 	if (user.password !== password) {
 		return reply.status(401).send({ message: 'Invalid username or password' });
 	}
