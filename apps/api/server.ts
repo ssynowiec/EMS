@@ -1,10 +1,18 @@
 import fastify from 'fastify';
 import { PrismaClient } from '@prisma/client';
+import cors from '@fastify/cors';
 
 export const prisma = new PrismaClient();
 export const server = fastify();
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret';
+
+server.register(cors, {
+	origin: true,
+	credentials: true,
+	allowedHeaders: ['Content-Type', 'Authorization'],
+	methods: ['GET', 'POST', 'PUT'],
+});
 
 server.get('/status', async () => ({ status: 'ok' }));
 server.post('/user', async (request, reply) => {
@@ -36,6 +44,42 @@ server.post('/user', async (request, reply) => {
 
 server.get('/users', async () => {
 	return await prisma.user.findMany();
+});
+
+server.put('/user', async (request, reply) => {
+	const { name, email, password, repeatPassword } = request.body;
+
+	// TODO: Full name Regex
+	const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
+
+	if (nameRegex.test(name)) {
+		return reply
+			.status(400)
+			.send({ errors: { name: { message: 'Invalid Full name.' } } });
+	}
+
+	const user = await prisma.user.findUnique({
+		where: { email },
+	});
+
+	if (user)
+		return reply.status(409).send({
+			error: { field: 'email', message: 'User already exists.' },
+		});
+
+	if (password !== repeatPassword)
+		return reply.status(400).send({
+			error: { field: 'password', message: 'Passwords do not match.' },
+		});
+
+	const newUser = await prisma.user.create({
+		data: {
+			name,
+			email,
+			password,
+		},
+	});
+	return reply.status(200).send(newUser);
 });
 
 // for (const schema of [...userSchemas, ...eventSchemas]) {

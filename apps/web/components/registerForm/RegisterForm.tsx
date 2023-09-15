@@ -50,6 +50,7 @@ export const RegisterForm = () => {
 	});
 
 	const onSubmit = async (data: Inputs) => {
+		console.log(API_URL);
 		const res = await fetch(`${API_URL}/user`, {
 			method: 'PUT',
 			headers: {
@@ -58,17 +59,22 @@ export const RegisterForm = () => {
 			body: JSON.stringify(data),
 		});
 
-		// if (res?.error) {
-		// 	setError('username', {
-		// 		type: 'manual',
-		// 		message: res.error,
-		// 	});
-		// 	setError('password', {
-		// 		type: 'manual',
-		// 		message: res.error,
-		// 	});
-		// }
-		//
+		const resJson = await res.json();
+
+		if (resJson?.error) {
+			setError(resJson.error.field, {
+				type: 'manual',
+				message: resJson.error.message,
+			});
+			if (resJson?.error.field === 'password')
+				setError('repeatPassword', {
+					type: 'manual',
+					message: resJson.error.message,
+				});
+		}
+
+		if (res.ok) return;
+
 		// if (res?.url) router.push(res.url);
 		// setSubmitting(false);
 	};
