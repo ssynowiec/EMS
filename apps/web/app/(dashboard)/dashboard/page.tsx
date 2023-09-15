@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { DashboardPage } from '../../../components/dashboardPage/DashboardPage';
 
 export const metadata: Metadata = {
 	title: 'Dashboard | EMS',
@@ -9,6 +10,7 @@ const Dashboard = () => {
 	return (
 		<>
 			<h1>Dashboard</h1>
+			<DashboardPage />
 		</>
 	);
 };

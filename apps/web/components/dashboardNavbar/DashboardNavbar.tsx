@@ -2,67 +2,76 @@
 
 import { signOut, useSession } from 'next-auth/react';
 import {
+	Button,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
-	Link,
 	Navbar,
 	NavbarContent,
 	NavbarItem,
-	NavbarMenuToggle,
 	User,
 } from '@nextui-org/react';
 import { BellIcon } from 'ui';
+import { useSidebarContext } from '../../app/(dashboard)/sidebarContext';
 
-export const DashboardNavbar = ({ children }) => {
+const userMenuLinks = [
+	{
+		onClick: () => console.log('test'),
+		title: 'Test',
+	},
+	{
+		onClick: () => signOut(),
+		title: 'Log Out',
+	},
+];
+
+export const DashboardNavbar = () => {
 	const { data: session } = useSession();
-
-	const isMenuOpen = false;
+	const { isSidebarOpen, closeSidebar } = useSidebarContext();
 
 	return (
-		<div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-			<Navbar isBordered={true} className="w-full">
-				<NavbarContent className="md:hidden">
-					<NavbarMenuToggle
-						aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-					/>
-				</NavbarContent>
+		<Navbar
+			isBordered={true}
+			className="w-full"
+			classNames={{ wrapper: 'max-w-full' }}
+		>
+			<NavbarContent className="md:hidden">
+				<Button onClick={closeSidebar}></Button>
+				{/*<NavbarMenuToggle*/}
+				{/*	aria-label={*/}
+				{/*		isSidebarOpen ? 'Close sidebar menu' : 'Open sidebar menu'*/}
+				{/*	}*/}
+				{/*	onClick={closeSidebar}*/}
+				{/*/>*/}
+			</NavbarContent>
 
-				<NavbarContent justify="end">
-					<BellIcon />
-					<Dropdown>
-						<NavbarItem>
-							<DropdownTrigger>
-								{/*<Button variant="bordered" className="p-6">*/}
-								<User
-									name={session?.user?.name}
-									// description="Product Designer"
-									avatarProps={{
-										isBordered: true,
-										color: 'danger',
-										size: 'md',
-										src: session?.user?.image || '',
-									}}
-									className="cursor-pointer"
-								/>
-								{/*</Button>*/}
-							</DropdownTrigger>
-						</NavbarItem>
-						<DropdownMenu aria-label="User menu">
-							<DropdownItem onClick={() => console.log('test')} key="test">
-								Test
+			<NavbarContent justify="end">
+				<BellIcon />
+				<Dropdown>
+					<NavbarItem>
+						<DropdownTrigger className="cursor-pointer">
+							<User
+								name={session?.user?.name}
+								description={session?.user?.email}
+								avatarProps={{
+									isBordered: true,
+									color: 'danger',
+									size: 'md',
+									src: session?.user?.image || '',
+								}}
+							/>
+						</DropdownTrigger>
+					</NavbarItem>
+					<DropdownMenu aria-label="User menu">
+						{userMenuLinks.map((link) => (
+							<DropdownItem onClick={link.onClick} key={link.title}>
+								{link.title}
 							</DropdownItem>
-							<DropdownItem>My profile</DropdownItem>
-							<DropdownItem onClick={() => signOut()} key="logout">
-								Log out
-							</DropdownItem>
-						</DropdownMenu>
-					</Dropdown>
-				</NavbarContent>
-				<Link href="#"></Link>
-			</Navbar>
-			<section className="w-11/12 mx-auto">{children}</section>
-		</div>
+						))}
+					</DropdownMenu>
+				</Dropdown>
+			</NavbarContent>
+		</Navbar>
 	);
 };

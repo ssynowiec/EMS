@@ -19,7 +19,7 @@ export const useSidebarContext = () => {
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-	const closeSidebar = () => setIsSidebarOpen(false);
+	const closeSidebar = () => setIsSidebarOpen((prevState) => !prevState);
 
 	return (
 		<SidebarContext.Provider value={{ isSidebarOpen, closeSidebar }}>
