@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@nextui-org/react';
+import { Button, Checkbox, Input } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { EyeFilledIcon, EyeSlashFilledIcon } from 'ui';
@@ -13,20 +13,26 @@ type Inputs = {
 	email: string;
 	password: string;
 	repeatPassword: string;
+	termsAndConditions: boolean;
 };
 
 const validationSchema = yup.object({
 	name: yup.string().required('Name is required'),
 	email: yup
 		.string()
-		.min(8, 'Password must be at least 8 characters')
 		.email('Invalid email format')
 		.required('Email is required'),
-	password: yup.string().required('Password is required'),
+	password: yup
+		.string()
+		.min(8, 'Password must be at least 8 characters')
+		.required('Password is required'),
 	repeatPassword: yup
 		.string()
 		.required()
-		.oneOf([yup.ref('password'), null], 'Passwords must match'),
+		.oneOf([yup.ref('password'), 'Passwords must match']),
+	termsAndConditions: yup
+		.bool()
+		.oneOf([true], 'Accept Terms & Conditions is required'),
 });
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -155,6 +161,13 @@ export const RegisterForm = () => {
 					type={isVisible ? 'text' : 'password'}
 					className="w-full"
 				/>
+				<Checkbox
+					{...register('termsAndConditions')}
+					className={errors.termsAndConditions ? 'text-red-500' : ''}
+					required={true}
+				>
+					Terms and conditions
+				</Checkbox>
 				<Button
 					type="submit"
 					color="primary"
