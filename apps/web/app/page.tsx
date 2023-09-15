@@ -1,4 +1,4 @@
-import { Button } from 'ui';
+import { Button } from '@nextui-org/react';
 
 const IndexPage = () => {
 	return (

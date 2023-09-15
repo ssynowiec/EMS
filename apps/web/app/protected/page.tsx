@@ -2,8 +2,7 @@
 
 import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import { Button } from 'ui';
-import { Avatar } from '@nextui-org/react';
+import { Avatar, Button } from '@nextui-org/react';
 
 const ClientProtectPage = () => {
 	const { data: session } = useSession({
