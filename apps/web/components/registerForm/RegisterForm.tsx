@@ -7,6 +7,7 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from 'ui';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import clsx from 'clsx';
 
 type Inputs = {
 	name: string;
@@ -163,8 +164,9 @@ export const RegisterForm = () => {
 				/>
 				<Checkbox
 					{...register('termsAndConditions')}
-					className={errors.termsAndConditions ? 'text-red-500' : ''}
+					className={clsx(errors.termsAndConditions ? 'text-red-500' : '')}
 					required={true}
+					color="secondary"
 				>
 					Terms and conditions
 				</Checkbox>
