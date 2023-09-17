@@ -18,6 +18,13 @@ export const SocialLoginButtons = () => {
 			>
 				Continue with Google
 			</Button>
+			{/*<Button*/}
+			{/*	startContent={<LinkedinIcon />}*/}
+			{/*	className="w-full"*/}
+			{/*	onClick={() => signIn('linkedin', { callbackUrl })}*/}
+			{/*>*/}
+			{/*	Continue with LinkedIn*/}
+			{/*</Button>*/}
 			<Button
 				startContent={<GithubIcon />}
 				className="w-full"

@@ -19,6 +19,17 @@ export const authOptions = {
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 		}),
+		// LinkedIn({
+		// 	clientId: process.env.LINKEDIN_CLIENT_ID as string,
+		// 	clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+		// 	wellKnown:
+		// 		'https://www.linkedin.com/oauth/.well-known/openid-configuration',
+		// 	authorization: {
+		// 		params: {
+		// 			scope: 'openid profile email',
+		// 		},
+		// 	},
+		// }),
 		Github({
 			clientId: process.env.GITHUB_CLIENT_ID as string,
 			clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
