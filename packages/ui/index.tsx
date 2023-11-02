@@ -9,4 +9,5 @@ export { SettingsIcon } from './components/icons/settingsIcon/SettingsIcon';
 export { BellIcon } from './components/icons/bellIcon/BellIcon';
 export { SearchIcon } from './components/icons/searchIcon/SearchIcon';
 export { EnFlagIcon } from './components/icons/enFlagIcon/EnFlagIcon';
+export { PlusIcon } from './components/icons/plusIcon/PlusIcon';
 export { Footer } from './components/footer/Footer';
