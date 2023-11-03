@@ -11,4 +11,7 @@ export { SearchIcon } from './components/icons/searchIcon/SearchIcon';
 export { EnFlagIcon } from './components/icons/enFlagIcon/EnFlagIcon';
 export { PlusIcon } from './components/icons/plusIcon/PlusIcon';
 export { ChevronDownIcon } from './components/icons/chevronDownIcon/ChevronDownIcon';
+export { EditIcon } from './components/icons/editIcon/EditIcon';
+export { DeleteIcon } from './components/icons/deleteIcon/DeleteIcon';
+export { EyeIcon } from './components/icons/eyeIcon/EyeIcon';
 export { Footer } from './components/footer/Footer';
