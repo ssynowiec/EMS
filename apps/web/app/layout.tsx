@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { Provider } from '../components/provider/Provider';
 import { authOptions } from './api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth/next';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,14 +18,13 @@ type RootLayoutProps = {
 	children: ReactNode;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
 const RootLayout = async ({ children }: RootLayoutProps) => {
 	const session = await getServerSession(authOptions);
 
 	return (
 		<html lang="en" className="light bg-lightBlue">
 			<body className={inter.className}>
+				<Toaster richColors={true} />
 				<Provider session={session}>{children}</Provider>
 				{/*<Footer />*/}
 			</body>
