@@ -8,7 +8,15 @@ export const metadata: Metadata = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Users = async () => {
+type UsersPageProps = {
+	searchParams: {
+		search: string;
+		rowsPerPage: string;
+		page: string;
+	};
+};
+
+const Users = async ({ searchParams }: UsersPageProps) => {
 	const res = await fetch(`${API_URL}/users`, {
 		method: 'GET',
 		cache: 'no-cache',
@@ -19,7 +27,7 @@ const Users = async () => {
 	return (
 		<div>
 			<h1>Users</h1>
-			<UsersTable users={usersData} />
+			<UsersTable users={usersData} filters={searchParams} />
 		</div>
 	);
 };
