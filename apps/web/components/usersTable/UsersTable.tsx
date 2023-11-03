@@ -1,16 +1,36 @@
 'use client';
 
 import {
-	getKeyValue,
+	Link,
+	Pagination,
 	Table,
 	TableBody,
 	TableCell,
 	TableColumn,
 	TableHeader,
 	TableRow,
+	Tooltip,
 } from '@nextui-org/react';
+import {
+	type Key,
+	startTransition,
+	useCallback,
+	useMemo,
+	useOptimistic,
+	useState,
+} from 'react';
+import { TopContent } from './TopContentUserTable';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { createQueryString } from '../../utils/createQueryString';
+import { EditIcon, EyeIcon } from 'ui';
+import { DeleteButton } from '../deleteButton/DeleteButton';
+import { toast } from 'sonner';
 
-const columns = [
+export const columns = [
+	{
+		key: 'id',
+		label: 'ID',
+	},
 	{
 		key: 'name',
 		label: 'NAME',
@@ -27,19 +47,199 @@ const columns = [
 		key: 'status',
 		label: 'STATUS',
 	},
+	{ key: 'actions', label: 'ACTIONS' },
 ];
 
-export const UsersTable = ({ users }) => {
+type User = {
+	id: string;
+	key: string;
+	name: string;
+	email: string;
+	emailVerified: boolean;
+	role: string;
+};
+
+type Filters = {
+	search: string;
+	rowsPerPage: string;
+	page: string;
+};
+
+type UsersTableProps = {
+	users: User[];
+	filters: Filters;
+};
+
+const INITIAL_VISIBLE_COLUMNS = ['name', 'email', 'role', 'actions'];
+
+export const UsersTable = ({ users, filters }: UsersTableProps) => {
+	const { search, rowsPerPage = '10', page = '1' } = filters;
+	const router = useRouter();
+	const pathname = usePathname();
+
+	const [optimisticUsersList, setOptimisticUsersList] = useOptimistic(users);
+
+	const [visibleColumns, setVisibleColumns] = useState(
+		new Set(INITIAL_VISIBLE_COLUMNS),
+	);
+
+	const searchParams = useSearchParams();
+
+	const filteredUsers = useMemo(() => {
+		if (search) {
+			return optimisticUsersList.filter(
+				(user: User) =>
+					user.name.toLowerCase().includes(search.toLowerCase()) ||
+					user.email.toLowerCase().includes(search.toLowerCase()),
+			);
+		}
+		return optimisticUsersList;
+	}, [search, optimisticUsersList]);
+
+	const pages = Math.ceil(filteredUsers.length / parseInt(rowsPerPage));
+
+	const items = useMemo(() => {
+		const start = (parseInt(page) - 1) * parseInt(rowsPerPage);
+		const end = start + parseInt(rowsPerPage);
+		return filteredUsers.slice(start, end);
+	}, [filteredUsers, page, rowsPerPage]);
+
+	const headerColumns = useMemo(() => {
+		// if (visibleColumns.has('all')) return columns;
+
+		return columns.filter((column) =>
+			Array.from(visibleColumns).includes(column.key),
+		);
+	}, [visibleColumns]);
+
+	const deleteUser = async (userEmail: string) => {
+		const currentDataTime = new Date().toLocaleString();
+
+		const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+		startTransition(() => {
+			setOptimisticUsersList(
+				optimisticUsersList.filter((user: User) => user.email !== userEmail),
+			);
+		});
+
+		const res = await fetch(`${API_URL}/user/${userEmail}`, {
+			method: 'DELETE',
+		});
+
+		res.ok
+			? toast.success('User deleted successfully', {
+					description: (
+						<p>
+							User <span className="font-extrabold">{userEmail}</span> has been
+							deleted successfully
+							<br />
+							<span className="text-[10px]">{currentDataTime}</span>
+						</p>
+					),
+			  })
+			: toast.error('User not deleted', {
+					description: (
+						<p>
+							Something went wrong, user{' '}
+							<span className="font-extrabold">{userEmail}</span> has not been
+							deleted
+							<br />
+							<span className="text-[10px]">{currentDataTime}</span>
+						</p>
+					),
+			  });
+	};
+
+	const renderCell = useCallback(
+		(user: User, columnKey: Key) => {
+			const cellValue = user[columnKey as keyof User];
+
+			switch (columnKey) {
+				// case 'emailVerified':
+				// 	return (
+				// 		<Chip
+				// 			className="capitalize"
+				// 			color={'success'}
+				// 			size="sm"
+				// 			variant="flat"
+				// 		>
+				// 			{cellValue != '' ? 'active' : 'inactive'}
+				// 		</Chip>
+				// 	);
+				// case 'email':
+				// 	return <Link href={`mailto:${user.email}`}>{user.email}</Link>;
+				case 'actions':
+					return (
+						<div className="relative flex items-center gap-2">
+							<Tooltip content="Details">
+								<span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+									<EyeIcon />
+								</span>
+							</Tooltip>
+							<Tooltip content="Edit user">
+								<Link
+									href={`/users/${user.id}/edit`}
+									className="text-lg text-default-400 cursor-pointer active:opacity-50"
+								>
+									<EditIcon />
+								</Link>
+							</Tooltip>
+							<Tooltip color="danger" content="Delete user">
+								<span className="text-lg text-danger cursor-pointer active:opacity-50">
+									<DeleteButton
+										onDelete={() => deleteUser(user.email)}
+										objectToDelete={`user ${user.email} `}
+									/>
+								</span>
+							</Tooltip>
+						</div>
+					);
+				default:
+					return cellValue;
+			}
+		},
+		[router],
+	);
+
 	return (
-		<Table aria-label="Example table with dynamic content">
-			<TableHeader columns={columns}>
+		<Table
+			aria-label="User table"
+			topContent={
+				<TopContent
+					totalUsers={filteredUsers.length}
+					visibleColumns={visibleColumns}
+					setVisibleColumns={setVisibleColumns}
+				/>
+			}
+			isStriped={true}
+			bottomContent={
+				<div className="flex w-full justify-center">
+					<Pagination
+						isCompact
+						showControls
+						showShadow
+						color="secondary"
+						page={parseInt(page)}
+						total={pages}
+						onChange={(page) =>
+							router.push(
+								pathname +
+									createQueryString(searchParams, 'page', page.toString()),
+							)
+						}
+					/>
+				</div>
+			}
+		>
+			<TableHeader columns={headerColumns}>
 				{(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
 			</TableHeader>
-			<TableBody items={users}>
-				{(item) => (
-					<TableRow key={item.key}>
+			<TableBody items={items} emptyContent="No rows to display.">
+				{(user: User) => (
+					<TableRow key={user.key}>
 						{(columnKey) => (
-							<TableCell>{getKeyValue(item, columnKey)}</TableCell>
+							<TableCell>{renderCell(user, columnKey)}</TableCell>
 						)}
 					</TableRow>
 				)}
