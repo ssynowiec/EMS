@@ -11,7 +11,7 @@ server.register(cors, {
 	origin: true,
 	credentials: true,
 	allowedHeaders: ['Content-Type', 'Authorization'],
-	methods: ['GET', 'POST', 'PUT'],
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
 });
 
 server.get('/status', async () => ({ status: 'ok' }));
@@ -50,17 +50,31 @@ server.get('/users', async () => {
 	return await prisma.user.findMany();
 });
 
+server.get('/user/:id', async (request, reply) => {
+	const { id } = request.params as { id: string };
+
+	const user = await prisma.user.findUnique({
+		where: { id: id },
+	});
+
+	if (!user) {
+		return reply.status(404).send({ message: 'User not found' });
+	}
+
+	return reply.send(user);
+});
+
 server.put('/user', async (request, reply) => {
 	const { name, email, password, repeatPassword } = request.body;
 
 	// TODO: Full name Regex
 	const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
 
-	if (nameRegex.test(name)) {
-		return reply
-			.status(400)
-			.send({ errors: { name: { message: 'Invalid Full name.' } } });
-	}
+	// if (nameRegex.test(name)) {
+	// 	return reply
+	// 		.status(400)
+	// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
+	// }
 
 	const user = await prisma.user.findUnique({
 		where: { email },
@@ -84,6 +98,26 @@ server.put('/user', async (request, reply) => {
 		},
 	});
 	return reply.status(200).send(newUser);
+});
+
+server.delete('/user/:email', async (request, reply) => {
+	const { email } = request.params as { email: string };
+
+	try {
+		const deletedItem = await prisma.user.delete({
+			where: { email: email },
+		});
+
+		if (deletedItem) {
+			return reply.send(true);
+		} else {
+			reply.code(404);
+			return { error: 'Rekord nie istnieje' };
+		}
+	} catch (error) {
+		reply.code(500);
+		return { error: 'Wystąpił błąd podczas usuwania rekordu' };
+	}
 });
 
 // for (const schema of [...userSchemas, ...eventSchemas]) {
