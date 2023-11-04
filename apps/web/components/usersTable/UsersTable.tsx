@@ -83,10 +83,18 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 	});
 
 	const mutation = useMutation({
-		mutationFn: (userEmail: string) => {
-			return fetch(`${API_URL}/user/${userEmail}`, {
+		mutationFn: async (userEmail: string) => {
+			const res = await fetch(`${API_URL}/user/${userEmail}`, {
 				method: 'DELETE',
 			});
+
+			const resJson = await res.json();
+
+			if (resJson?.error) {
+				throw new Error(resJson.error.message);
+			}
+
+			return resJson;
 		},
 		onSuccess: (data, userEmail) => {
 			const currentDataTime = new Date().toLocaleString();
@@ -103,14 +111,15 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 				),
 			});
 		},
-		onError: () => {
+		onError: (error, userEmail) => {
 			const currentDataTime = new Date().toLocaleString();
 
 			toast.error('User not deleted', {
 				description: (
 					<p>
 						Something went wrong, user{' '}
-						<span className="font-extrabold">{'ss'}</span> has not been deleted
+						<span className="font-extrabold">{userEmail}</span> has not been
+						deleted
 						<br />
 						<span className="text-[10px]">{currentDataTime}</span>
 					</p>
@@ -211,58 +220,54 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 	}, []);
 
 	return (
-		<>
-			<Table
-				aria-label="User table"
-				topContent={
-					<TopContent
-						totalUsers={filteredUsers.length}
-						visibleColumns={visibleColumns}
-						setVisibleColumns={setVisibleColumns}
+		<Table
+			aria-label="User table"
+			topContent={
+				<TopContent
+					totalUsers={filteredUsers.length}
+					visibleColumns={visibleColumns}
+					setVisibleColumns={setVisibleColumns}
+				/>
+			}
+			isStriped={true}
+			bottomContent={
+				<div className="flex w-full justify-center">
+					<Pagination
+						isCompact
+						showControls
+						showShadow
+						color="secondary"
+						page={parseInt(page)}
+						total={pages}
+						onChange={(page) =>
+							router.push(
+								pathname +
+									createQueryString(searchParams, 'page', page.toString()),
+							)
+						}
 					/>
-				}
-				isStriped={true}
-				bottomContent={
-					<div className="flex w-full justify-center">
-						<Pagination
-							isCompact
-							showControls
-							showShadow
-							color="secondary"
-							page={parseInt(page)}
-							total={pages}
-							onChange={(page) =>
-								router.push(
-									pathname +
-										createQueryString(searchParams, 'page', page.toString()),
-								)
-							}
-						/>
-					</div>
+				</div>
+			}
+		>
+			<TableHeader columns={headerColumns}>
+				{(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+			</TableHeader>
+			<TableBody
+				items={items}
+				emptyContent="No rows to display."
+				isLoading={isPending || isFetching}
+				loadingContent={
+					<Spinner label="Loading..." size="lg" color="secondary" />
 				}
 			>
-				<TableHeader columns={headerColumns}>
-					{(column) => (
-						<TableColumn key={column.key}>{column.label}</TableColumn>
-					)}
-				</TableHeader>
-				<TableBody
-					items={items}
-					emptyContent="No rows to display."
-					isLoading={isPending || isFetching}
-					loadingContent={
-						<Spinner label="Loading..." size="lg" color="secondary" />
-					}
-				>
-					{(user: User) => (
-						<TableRow key={user.key}>
-							{(columnKey) => (
-								<TableCell>{renderCell(user, columnKey)}</TableCell>
-							)}
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
-		</>
+				{(user: User) => (
+					<TableRow key={user.key}>
+						{(columnKey) => (
+							<TableCell>{renderCell(user, columnKey)}</TableCell>
+						)}
+					</TableRow>
+				)}
+			</TableBody>
+		</Table>
 	);
 };
