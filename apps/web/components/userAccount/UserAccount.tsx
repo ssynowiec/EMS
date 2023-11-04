@@ -12,10 +12,11 @@ import {
 import { signIn } from 'next-auth/react';
 import { FacebookIcon, GithubIcon, GoogleIcon } from 'ui';
 import { LinkedinIcon } from 'ui/components/icons/linkedinIcon/LinkedinIcon';
+import type { ReactElement } from 'react';
 
 type AccountProvider = {
 	name: string;
-	icon: JSX.Element;
+	icon: ReactElement;
 	isAvailable: boolean;
 	onLink: () => void;
 	onUnlink: () => void;
