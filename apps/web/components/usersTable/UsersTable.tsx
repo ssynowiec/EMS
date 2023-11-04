@@ -3,6 +3,7 @@
 import {
 	Link,
 	Pagination,
+	Spinner,
 	Table,
 	TableBody,
 	TableCell,
@@ -11,19 +12,13 @@ import {
 	TableRow,
 	Tooltip,
 } from '@nextui-org/react';
-import {
-	type Key,
-	startTransition,
-	useCallback,
-	useMemo,
-	useOptimistic,
-	useState,
-} from 'react';
+import { type Key, useCallback, useMemo, useState } from 'react';
 import { TopContent } from './TopContentUserTable';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { createQueryString } from '../../utils/createQueryString';
 import { EditIcon, EyeIcon } from 'ui';
 import { DeleteButton } from '../deleteButton/DeleteButton';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export const columns = [
@@ -66,37 +61,88 @@ type Filters = {
 };
 
 type UsersTableProps = {
-	users: User[];
 	filters: Filters;
 };
 
 const INITIAL_VISIBLE_COLUMNS = ['name', 'email', 'role', 'actions'];
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const UsersTable = ({ users, filters }: UsersTableProps) => {
+export const UsersTable = ({ filters }: UsersTableProps) => {
+	const queryClient = useQueryClient();
+
+	const { isPending, data, isFetching } = useQuery({
+		queryKey: ['users'],
+		queryFn: async () => {
+			const res = await fetch(`${API_URL}/users`, {
+				method: 'GET',
+				cache: 'no-cache',
+			});
+
+			return await res.json();
+		},
+	});
+
+	const mutation = useMutation({
+		mutationFn: (userEmail: string) => {
+			return fetch(`${API_URL}/user/${userEmail}`, {
+				method: 'DELETE',
+			});
+		},
+		onSuccess: (data, userEmail) => {
+			const currentDataTime = new Date().toLocaleString();
+
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+			toast.success('User deleted successfully', {
+				description: (
+					<p>
+						User <span className="font-extrabold">{userEmail}</span> has been
+						deleted successfully
+						<br />
+						<span className="text-[10px]">{currentDataTime}</span>
+					</p>
+				),
+			});
+		},
+		onError: () => {
+			const currentDataTime = new Date().toLocaleString();
+
+			toast.error('User not deleted', {
+				description: (
+					<p>
+						Something went wrong, user{' '}
+						<span className="font-extrabold">{'ss'}</span> has not been deleted
+						<br />
+						<span className="text-[10px]">{currentDataTime}</span>
+					</p>
+				),
+			});
+		},
+	});
+
 	const { search, rowsPerPage = '10', page = '1' } = filters;
 	const router = useRouter();
 	const pathname = usePathname();
-
-	const [optimisticUsersList, setOptimisticUsersList] = useOptimistic(users);
 
 	const [visibleColumns, setVisibleColumns] = useState(
 		new Set(INITIAL_VISIBLE_COLUMNS),
 	);
 
+	const usersData = useMemo(() => data || [], [data]);
+
 	const searchParams = useSearchParams();
 
 	const filteredUsers = useMemo(() => {
 		if (search) {
-			return optimisticUsersList.filter(
+			return usersData.filter(
 				(user: User) =>
 					user.name.toLowerCase().includes(search.toLowerCase()) ||
 					user.email.toLowerCase().includes(search.toLowerCase()),
 			);
 		}
-		return optimisticUsersList;
-	}, [search, optimisticUsersList]);
+		return usersData;
+	}, [search, usersData]);
 
-	const pages = Math.ceil(filteredUsers.length / parseInt(rowsPerPage));
+	const pages = Math.ceil(filteredUsers.length / parseInt(rowsPerPage)) || 1;
 
 	const items = useMemo(() => {
 		const start = (parseInt(page) - 1) * parseInt(rowsPerPage);
@@ -113,137 +159,110 @@ export const UsersTable = ({ users, filters }: UsersTableProps) => {
 	}, [visibleColumns]);
 
 	const deleteUser = async (userEmail: string) => {
-		const currentDataTime = new Date().toLocaleString();
-
-		const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-		startTransition(() => {
-			setOptimisticUsersList(
-				optimisticUsersList.filter((user: User) => user.email !== userEmail),
-			);
-		});
-
-		const res = await fetch(`${API_URL}/user/${userEmail}`, {
-			method: 'DELETE',
-		});
-
-		res.ok
-			? toast.success('User deleted successfully', {
-					description: (
-						<p>
-							User <span className="font-extrabold">{userEmail}</span> has been
-							deleted successfully
-							<br />
-							<span className="text-[10px]">{currentDataTime}</span>
-						</p>
-					),
-			  })
-			: toast.error('User not deleted', {
-					description: (
-						<p>
-							Something went wrong, user{' '}
-							<span className="font-extrabold">{userEmail}</span> has not been
-							deleted
-							<br />
-							<span className="text-[10px]">{currentDataTime}</span>
-						</p>
-					),
-			  });
+		mutation.mutate(userEmail);
 	};
 
-	const renderCell = useCallback(
-		(user: User, columnKey: Key) => {
-			const cellValue = user[columnKey as keyof User];
+	const renderCell = useCallback((user: User, columnKey: Key) => {
+		const cellValue = user[columnKey as keyof User];
 
-			switch (columnKey) {
-				// case 'emailVerified':
-				// 	return (
-				// 		<Chip
-				// 			className="capitalize"
-				// 			color={'success'}
-				// 			size="sm"
-				// 			variant="flat"
-				// 		>
-				// 			{cellValue != '' ? 'active' : 'inactive'}
-				// 		</Chip>
-				// 	);
-				// case 'email':
-				// 	return <Link href={`mailto:${user.email}`}>{user.email}</Link>;
-				case 'actions':
-					return (
-						<div className="relative flex items-center gap-2">
-							<Tooltip content="Details">
-								<span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-									<EyeIcon />
-								</span>
-							</Tooltip>
-							<Tooltip content="Edit user">
-								<Link
-									href={`/users/${user.id}/edit`}
-									className="text-lg text-default-400 cursor-pointer active:opacity-50"
-								>
-									<EditIcon />
-								</Link>
-							</Tooltip>
-							<Tooltip color="danger" content="Delete user">
-								<span className="text-lg text-danger cursor-pointer active:opacity-50">
-									<DeleteButton
-										onDelete={() => deleteUser(user.email)}
-										objectToDelete={`user ${user.email} `}
-									/>
-								</span>
-							</Tooltip>
-						</div>
-					);
-				default:
-					return cellValue;
-			}
-		},
-		[router],
-	);
+		switch (columnKey) {
+			// case 'emailVerified':
+			// 	return (
+			// 		<Chip
+			// 			className="capitalize"
+			// 			color={'success'}
+			// 			size="sm"
+			// 			variant="flat"
+			// 		>
+			// 			{cellValue != '' ? 'active' : 'inactive'}
+			// 		</Chip>
+			// 	);
+			// case 'email':
+			// 	return <Link href={`mailto:${user.email}`}>{user.email}</Link>;
+			case 'actions':
+				return (
+					<div className="relative flex items-center gap-2">
+						<Tooltip content="Details">
+							<span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+								<EyeIcon />
+							</span>
+						</Tooltip>
+						<Tooltip content="Edit user">
+							<Link
+								href={`/users/${user.id}/edit`}
+								className="text-lg text-default-400 cursor-pointer active:opacity-50"
+							>
+								<EditIcon />
+							</Link>
+						</Tooltip>
+						<Tooltip color="danger" content="Delete user">
+							<span className="text-lg text-danger cursor-pointer active:opacity-50">
+								<DeleteButton
+									onDelete={() => deleteUser(user.email)}
+									objectToDelete={`user ${user.email} `}
+								/>
+							</span>
+						</Tooltip>
+					</div>
+				);
+			default:
+				return cellValue;
+		}
+	}, []);
 
 	return (
-		<Table
-			aria-label="User table"
-			topContent={
-				<TopContent
-					totalUsers={filteredUsers.length}
-					visibleColumns={visibleColumns}
-					setVisibleColumns={setVisibleColumns}
-				/>
-			}
-			isStriped={true}
-			bottomContent={
-				<div className="flex w-full justify-center">
-					<Pagination
-						isCompact
-						showControls
-						showShadow
-						color="secondary"
-						page={parseInt(page)}
-						total={pages}
-						onChange={(page) =>
-							router.push(
-								pathname +
-									createQueryString(searchParams, 'page', page.toString()),
-							)
-						}
+		<>
+			<Table
+				aria-label="User table"
+				topContent={
+					<TopContent
+						totalUsers={filteredUsers.length}
+						visibleColumns={visibleColumns}
+						setVisibleColumns={setVisibleColumns}
 					/>
-				</div>
-			}
-		>
-			<TableHeader columns={headerColumns}>
-				{(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-			</TableHeader>
-			<TableBody items={items} emptyContent="No rows to display.">
-				{(user: User) => (
-					<TableRow key={user.key}>
-						{(columnKey) => (
-							<TableCell>{renderCell(user, columnKey)}</TableCell>
-						)}
-					</TableRow>
-				)}
-			</TableBody>
-		</Table>
+				}
+				isStriped={true}
+				bottomContent={
+					<div className="flex w-full justify-center">
+						<Pagination
+							isCompact
+							showControls
+							showShadow
+							color="secondary"
+							page={parseInt(page)}
+							total={pages}
+							onChange={(page) =>
+								router.push(
+									pathname +
+										createQueryString(searchParams, 'page', page.toString()),
+								)
+							}
+						/>
+					</div>
+				}
+			>
+				<TableHeader columns={headerColumns}>
+					{(column) => (
+						<TableColumn key={column.key}>{column.label}</TableColumn>
+					)}
+				</TableHeader>
+				<TableBody
+					items={items}
+					emptyContent="No rows to display."
+					isLoading={isPending || isFetching}
+					loadingContent={
+						<Spinner label="Loading..." size="lg" color="secondary" />
+					}
+				>
+					{(user: User) => (
+						<TableRow key={user.key}>
+							{(columnKey) => (
+								<TableCell>{renderCell(user, columnKey)}</TableCell>
+							)}
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</>
 	);
 };
