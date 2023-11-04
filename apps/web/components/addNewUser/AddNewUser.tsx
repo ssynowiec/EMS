@@ -14,11 +14,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { PlusIcon } from 'ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Inputs = {
 	name: string;
 	email: string;
 	password: string;
+	repeatPassword: string;
 };
 
 const validationSchema = yup.object({
@@ -31,6 +33,10 @@ const validationSchema = yup.object({
 		.string()
 		.min(8, 'Password must be at least 8 characters')
 		.required('Password is required'),
+	repeatPassword: yup
+		.string()
+		.required()
+		.oneOf([yup.ref('password'), 'Passwords must match']),
 });
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -43,39 +49,45 @@ export const AddNewUser = () => {
 		handleSubmit,
 		setError,
 		formState: { errors },
+		reset,
 	} = useForm<Inputs>({
 		resolver: yupResolver(validationSchema),
 	});
 
-	const onSubmit = async (data: Inputs) => {
-		console.log(data);
+	const queryClient = useQueryClient();
 
-		const res = await fetch(`${API_URL}/user`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		});
-
-		const resJson = await res.json();
-
-		if (resJson?.error) {
-			setError(resJson.error.field, {
-				type: 'manual',
-				message: resJson.error.message,
+	const addUser = useMutation({
+		mutationFn: async (data: Inputs) => {
+			const res = await fetch(`${API_URL}/user`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
 			});
-			// if (resJson?.error.field === 'password')
-			// 	setError('repeatPassword', {
-			// 		type: 'manual',
-			// 		message: resJson.error.message,
-			// 	});
-		}
 
-		if (res.ok) return onOpenChange();
+			const resJson = await res.json();
 
-		// if (res?.url) router.push(res.url);
-		// setSubmitting(false);
+			if (resJson?.error) {
+				setError(resJson.error.field, {
+					type: 'manual',
+					message: resJson.error.message,
+				});
+				throw new Error(resJson.error.message);
+			}
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+			onOpenChange();
+			reset();
+		},
+		onError: () => {
+			console.log('error');
+		},
+	});
+
+	const onSubmit = async (data: Inputs) => {
+		addUser.mutate(data);
 	};
 
 	return (
@@ -103,7 +115,6 @@ export const AddNewUser = () => {
 										errorMessage={errors.name?.message}
 										{...register('name', { required: true })}
 									/>
-
 									<Input
 										type="email"
 										label="Email"
@@ -117,6 +128,13 @@ export const AddNewUser = () => {
 										type="password"
 										errorMessage={errors.password?.message}
 										{...register('password', { required: true })}
+									/>
+									<Input
+										label="Reapet password"
+										placeholder="**********"
+										type="password"
+										errorMessage={errors.repeatPassword?.message}
+										{...register('repeatPassword', { required: true })}
 									/>
 								</ModalBody>
 								<ModalFooter>
