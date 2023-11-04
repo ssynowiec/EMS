@@ -9,7 +9,7 @@ import {
 	Input,
 	Link,
 } from '@nextui-org/react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { FacebookIcon, GithubIcon, GoogleIcon } from 'ui';
 import { LinkedinIcon } from 'ui/components/icons/linkedinIcon/LinkedinIcon';
 
@@ -54,9 +54,7 @@ const accountProviders: AccountProvider[] = [
 	},
 ];
 
-export const MyAccountPage = () => {
-	const { data: session } = useSession();
-
+export const UserAccount = ({ user }) => {
 	const connected = false;
 
 	return (
@@ -65,16 +63,16 @@ export const MyAccountPage = () => {
 				<CardBody>
 					<form className="flex flex-col gap-3">
 						<Image
-							src={session?.user?.image || '/images/avatar.png'}
-							alt={`${session?.user?.name} avatar`}
+							src={user.image || '/images/avatar.png'}
+							alt={`${user.name} avatar`}
 							width={100}
 							height={100}
 						/>
-						<Input label="Name" defaultValue={session?.user?.name || ''} />
+						<Input label="Name" defaultValue={user.name || ''} />
 						<div className="flex">
 							<Input
 								label="Email"
-								defaultValue={session?.user?.email || ''}
+								defaultValue={user.email || ''}
 								isDisabled={true}
 							/>
 							<Link className="cursor-pointer">Change email</Link>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { UserAccount } from '../../../../../components/userAccount/UserAccount';
 
 type EditUserPageProps = {
 	params: {
@@ -24,6 +25,7 @@ const EditUserPage = ({ params: { id } }: EditUserPageProps) => {
 	return (
 		<div>
 			Edit user: <span className="font-bold">{user.name}</span>
+			<UserAccount user={user} />
 		</div>
 	);
 };
