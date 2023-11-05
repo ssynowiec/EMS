@@ -191,19 +191,6 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 		const cellValue = user[columnKey as keyof User];
 
 		switch (columnKey) {
-			// case 'emailVerified':
-			// 	return (
-			// 		<Chip
-			// 			className="capitalize"
-			// 			color={'success'}
-			// 			size="sm"
-			// 			variant="flat"
-			// 		>
-			// 			{cellValue != '' ? 'active' : 'inactive'}
-			// 		</Chip>
-			// 	);
-			// case 'email':
-			// 	return <Link href={`mailto:${user.email}`}>{user.email}</Link>;
 			case 'status':
 				switch (cellValue) {
 					case 'ACTIVE':
