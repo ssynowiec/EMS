@@ -55,7 +55,7 @@ export const TopContent = ({
 					}
 				/>
 				<div className="flex gap-3">
-					<Button>
+					<Button className="bg-purple text-white">
 						<CSVLink
 							data={usersData}
 							filename="All_Users"
