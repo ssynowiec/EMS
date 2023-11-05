@@ -1,6 +1,7 @@
 'use client';
 
 import {
+	Chip,
 	Link,
 	Pagination,
 	Spinner,
@@ -61,7 +62,7 @@ type Filters = {
 	search: string;
 	rowsPerPage: string;
 	page: string;
-	roles: string[];
+	roles: string;
 };
 
 type UsersTableProps = {
@@ -203,6 +204,43 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 			// 	);
 			// case 'email':
 			// 	return <Link href={`mailto:${user.email}`}>{user.email}</Link>;
+			case 'status':
+				switch (cellValue) {
+					case 'ACTIVE':
+						return (
+							<Chip
+								className="capitalize"
+								color={'success'}
+								size="sm"
+								variant="flat"
+							>
+								{cellValue}
+							</Chip>
+						);
+					case 'BLOCKED':
+						return (
+							<Chip
+								className="capitalize"
+								color="danger"
+								size="sm"
+								variant="flat"
+							>
+								{cellValue}
+							</Chip>
+						);
+					case 'UNVERIFIED':
+						return (
+							<Chip
+								className="capitalize"
+								color={'warning'}
+								size="sm"
+								variant="flat"
+							>
+								{cellValue}
+							</Chip>
+						);
+				}
+				break;
 			case 'actions':
 				return (
 					<div className="relative flex items-center gap-2">

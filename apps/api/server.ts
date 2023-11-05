@@ -53,6 +53,7 @@ server.get('/users', async () => {
 			name: true,
 			email: true,
 			emailVerified: true,
+			status: true,
 			role: true,
 			createdAt: true,
 			updatedAt: true,

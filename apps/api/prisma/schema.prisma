@@ -13,6 +13,12 @@ enum Role {
   USER
 }
 
+enum Status {
+  ACTIVE
+  BLOCKED
+  UNVERIFIED
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -46,6 +52,7 @@ model User {
   email         String?   @unique
   role          Role      @default(USER)
   emailVerified DateTime?
+  status        Status    @default(UNVERIFIED)
   password      String?
   image         String?
   createdAt     DateTime  @default(now())
