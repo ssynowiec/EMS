@@ -48,6 +48,7 @@ export const TopContent = ({
 					}
 				/>
 				<div className="flex gap-3">
+					<Button>Export csv</Button>
 					<Dropdown>
 						<DropdownTrigger className="hidden sm:flex">
 							<Button endContent={<ChevronDownIcon />} variant="flat">
