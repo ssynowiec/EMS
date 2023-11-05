@@ -11,11 +11,13 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronDownIcon, SearchIcon } from 'ui';
 import { createQueryString } from '../../utils/createQueryString';
 import { columns } from './UsersTable';
+import { CSVLink } from 'react-csv';
 
 export const TopContent = ({
 	totalUsers,
 	visibleColumns,
 	setVisibleColumns,
+	usersData,
 }) => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -48,7 +50,16 @@ export const TopContent = ({
 					}
 				/>
 				<div className="flex gap-3">
-					<Button>Export csv</Button>
+					<Button>
+						<CSVLink
+							data={usersData}
+							filename="All_Users"
+							className="w-full h-full flex justify-center items-center"
+						>
+							Export .csv
+						</CSVLink>
+					</Button>
+
 					<Dropdown>
 						<DropdownTrigger className="hidden sm:flex">
 							<Button endContent={<ChevronDownIcon />} variant="flat">

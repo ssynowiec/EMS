@@ -230,6 +230,7 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 					totalUsers={filteredUsers.length}
 					visibleColumns={visibleColumns}
 					setVisibleColumns={setVisibleColumns}
+					usersData={filteredUsers}
 				/>
 			}
 			isStriped={true}
