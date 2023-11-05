@@ -57,11 +57,18 @@ server.get('/user/:id', async (request, reply) => {
 		where: { id: id },
 	});
 
+	const accounts = await prisma.account.findMany({
+		where: { userId: id },
+		select: {
+			provider: true,
+		},
+	});
+
 	if (!user) {
 		return reply.status(404).send({ message: 'User not found' });
 	}
 
-	return reply.send(user);
+	return reply.send({ ...user, accounts: accounts });
 });
 
 server.put('/user', async (request, reply) => {

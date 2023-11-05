@@ -56,8 +56,6 @@ const accountProviders: AccountProvider[] = [
 ];
 
 export const UserAccount = ({ user }) => {
-	const connected = false;
-
 	return (
 		<>
 			<Card>
@@ -85,6 +83,11 @@ export const UserAccount = ({ user }) => {
 			<h2>Linked accounts</h2>
 			<div className="flex flex-col gap-3">
 				{accountProviders.map((provider, index) => {
+					const isConnected = user.accounts?.some(
+						(accountProvider: { provider: string }) =>
+							accountProvider.provider === provider.name.toLowerCase(),
+					);
+
 					return (
 						<Card key={index}>
 							<CardBody>
@@ -94,7 +97,7 @@ export const UserAccount = ({ user }) => {
 										<h3>{provider.name}</h3>
 										{!provider.isAvailable && <Chip>soon...</Chip>}
 									</div>
-									{connected && provider.isAvailable ? (
+									{isConnected && provider.isAvailable ? (
 										<Button
 											color="success"
 											className="text-white"
