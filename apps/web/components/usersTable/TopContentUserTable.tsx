@@ -28,7 +28,7 @@ export const TopContent = ({
 	const search = searchParams.get('search') || '';
 	const rowsPerPage = searchParams.get('rowsPerPage') || '10';
 	const page = searchParams.get('page') || '1';
-	const initialRoles = searchParams.get('roles') || ['admin', 'user'];
+	const initialRoles = searchParams.get('roles') || 'admin,user';
 
 	const roles = new Set(initialRoles.split(','));
 

@@ -136,7 +136,7 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 		search,
 		rowsPerPage = '10',
 		page = '1',
-		roles = ['admin', 'user'],
+		roles = 'admin,user',
 	} = filters;
 	const router = useRouter();
 	const pathname = usePathname();
