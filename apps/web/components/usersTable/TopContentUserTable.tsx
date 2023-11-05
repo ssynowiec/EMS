@@ -13,6 +13,8 @@ import { createQueryString } from '../../utils/createQueryString';
 import { columns } from './UsersTable';
 import { CSVLink } from 'react-csv';
 
+const ROLES = ['admin', 'user'];
+
 export const TopContent = ({
 	totalUsers,
 	visibleColumns,
@@ -26,6 +28,9 @@ export const TopContent = ({
 	const search = searchParams.get('search') || '';
 	const rowsPerPage = searchParams.get('rowsPerPage') || '10';
 	const page = searchParams.get('page') || '1';
+	const initialRoles = searchParams.get('roles') || ['admin', 'user'];
+
+	const roles = new Set(initialRoles.split(','));
 
 	const rowsPerPageOptions = [2, 10, 15];
 
@@ -63,23 +68,27 @@ export const TopContent = ({
 					<Dropdown>
 						<DropdownTrigger className="hidden sm:flex">
 							<Button endContent={<ChevronDownIcon />} variant="flat">
-								Status
+								Role
 							</Button>
 						</DropdownTrigger>
 						<DropdownMenu
 							disallowEmptySelection
 							aria-label="Table Columns"
 							closeOnSelect={false}
-							selectedKeys={'all'}
+							selectedKeys={roles}
 							selectionMode="multiple"
-							// onSelectionChange={setStatusFilter}
+							onSelectionChange={(roles) => {
+								const role = Array.from(roles).join(',');
+								router.push(
+									pathname + createQueryString(searchParams, 'roles', role),
+								);
+							}}
 						>
-							<DropdownItem className="capitalize">All</DropdownItem>
-							{/*{statusOptions.map((status) => (*/}
-							{/*	<DropdownItem key={status.uid} className="capitalize">*/}
-							{/*		{capitalize(status.name)}*/}
-							{/*	</DropdownItem>*/}
-							{/*))}*/}
+							{ROLES.map((role) => (
+								<DropdownItem key={role} className="capitalize">
+									{role}
+								</DropdownItem>
+							))}
 						</DropdownMenu>
 					</Dropdown>
 					<Dropdown>

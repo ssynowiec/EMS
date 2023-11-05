@@ -61,6 +61,7 @@ type Filters = {
 	search: string;
 	rowsPerPage: string;
 	page: string;
+	roles: string[];
 };
 
 type UsersTableProps = {
@@ -85,7 +86,7 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 		},
 	});
 
-	const mutation = useMutation({
+	const deleteUserMutation = useMutation({
 		mutationFn: async (userEmail: string) => {
 			const res = await fetch(`${API_URL}/user/${userEmail}`, {
 				method: 'DELETE',
@@ -131,7 +132,12 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 		},
 	});
 
-	const { search, rowsPerPage = '10', page = '1' } = filters;
+	const {
+		search,
+		rowsPerPage = '10',
+		page = '1',
+		roles = ['admin', 'user'],
+	} = filters;
 	const router = useRouter();
 	const pathname = usePathname();
 
@@ -140,6 +146,7 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 	);
 
 	const usersData = useMemo(() => data || [], [data]);
+	const selectedRoles = useMemo(() => roles.toUpperCase().split(','), [roles]);
 
 	const searchParams = useSearchParams();
 
@@ -151,8 +158,13 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 					user.email.toLowerCase().includes(search.toLowerCase()),
 			);
 		}
+		if (roles) {
+			return usersData.filter((user: User) =>
+				selectedRoles.includes(user.role),
+			);
+		}
 		return usersData;
-	}, [search, usersData]);
+	}, [search, roles, usersData, selectedRoles]);
 
 	const pages = Math.ceil(filteredUsers.length / parseInt(rowsPerPage)) || 1;
 
@@ -171,7 +183,7 @@ export const UsersTable = ({ filters }: UsersTableProps) => {
 	}, [visibleColumns]);
 
 	const deleteUser = async (userEmail: string) => {
-		mutation.mutate(userEmail);
+		deleteUserMutation.mutate(userEmail);
 	};
 
 	const renderCell = useCallback((user: User, columnKey: Key) => {
