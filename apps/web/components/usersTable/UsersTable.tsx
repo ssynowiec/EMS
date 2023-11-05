@@ -42,6 +42,9 @@ export const columns = [
 		key: 'status',
 		label: 'STATUS',
 	},
+	{ key: 'emailVerified', label: 'EMAIL VERIFIED' },
+	{ key: 'createdAt', label: 'CREATED AT' },
+	{ key: 'updatedAt', label: 'UPDATED AT' },
 	{ key: 'actions', label: 'ACTIONS' },
 ];
 
