@@ -47,7 +47,17 @@ server.post('/user', async (request, reply) => {
 });
 
 server.get('/users', async () => {
-	return await prisma.user.findMany();
+	return await prisma.user.findMany({
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			emailVerified: true,
+			role: true,
+			createdAt: true,
+			updatedAt: true,
+		},
+	});
 });
 
 server.get('/user/:id', async (request, reply) => {
