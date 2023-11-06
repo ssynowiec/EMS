@@ -22,8 +22,6 @@ export type FastifyTypebox = FastifyInstance<
 	TypeBoxTypeProvider
 >;
 
-const SECRET_KEY = process.env.SECRET_KEY || 'secret';
-
 server.register(cors, {
 	origin: true,
 	credentials: true,
@@ -34,10 +32,6 @@ server.register(cors, {
 server.register(userRoutes);
 
 server.get('/status', async () => ({ status: 'ok' }));
-
-// for (const schema of [...userSchemas, ...eventSchemas]) {
-// 	server.addSchema(schema);
-// }
 
 const PORT = Number(process.env.PORT) || 4000;
 const start = async () => {
