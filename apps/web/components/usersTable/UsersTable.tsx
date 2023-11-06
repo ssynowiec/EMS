@@ -70,7 +70,7 @@ type UsersTableProps = {
 };
 
 const INITIAL_VISIBLE_COLUMNS = ['name', 'email', 'role', 'actions'];
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env['NEXT_PUBLIC_API_URL'];
 
 export const UsersTable = ({ filters }: UsersTableProps) => {
 	const queryClient = useQueryClient();

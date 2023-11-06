@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { type NextAuthOptions } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import Facebook from 'next-auth/providers/facebook';
@@ -10,14 +10,14 @@ const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
-	secret: process.env.NEXTAUTH_SECRET as string,
+	secret: process.env['NEXTAUTH_SECRET'] as string,
 	session: {
 		strategy: 'jwt',
 	},
 	providers: [
 		Google({
-			clientId: process.env.GOOGLE_CLIENT_ID as string,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			clientId: process.env['GOOGLE_CLIENT_ID'] as string,
+			clientSecret: process.env['GOOGLE_CLIENT_SECRET'] as string,
 		}),
 		// LinkedIn({
 		// 	clientId: process.env.LINKEDIN_CLIENT_ID as string,
@@ -31,31 +31,30 @@ export const authOptions: NextAuthOptions = {
 		// 	},
 		// }),
 		Github({
-			clientId: process.env.GITHUB_CLIENT_ID as string,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+			clientId: process.env['GITHUB_CLIENT_ID'] as string,
+			clientSecret: process.env['GITHUB_CLIENT_SECRET'] as string,
 		}),
 		Facebook({
-			clientId: process.env.FACEBOOK_CLIENT_ID as string,
-			clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+			clientId: process.env['FACEBOOK_CLIENT_ID'] as string,
+			clientSecret: process.env['FACEBOOK_CLIENT_SECRET'] as string,
 		}),
 		Credentials({
 			name: 'Credentials',
-			// `credentials` is used to generate a form on the sign in page.
-			// You can specify which fields should be submitted, by adding keys to the `credentials` object.
-			// e.g. domain, username, password, 2FA token, etc.
-			// You can pass any HTML attribute to the <input> tag through the object.
 			credentials: {
-				email: { label: 'Email', type: 'email', placeholder: 'jsmith' },
+				email: {
+					label: 'Email',
+					type: 'email',
+					placeholder: 'john@example.com',
+				},
 				password: { label: 'Password', type: 'password' },
 			},
-			async authorize(credentials, req) {
-				// Add logic here to look up the user from the credentials supplied
+			async authorize(credentials) {
 				const data = {
 					email: credentials?.email,
 					password: credentials?.password,
 				};
 
-				const API_URL = process.env.NEXT_PUBLIC_API_URL;
+				const API_URL = process.env['NEXT_PUBLIC_API_URL'];
 
 				const res = await fetch(`${API_URL}/user`, {
 					method: 'POST',

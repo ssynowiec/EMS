@@ -39,7 +39,7 @@ const validationSchema = yup.object({
 		.oneOf([yup.ref('password'), 'Passwords must match']),
 });
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env['NEXT_PUBLIC_API_URL'];
 
 export const AddNewUser = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -58,8 +58,8 @@ export const AddNewUser = () => {
 
 	const addUser = useMutation({
 		mutationFn: async (data: Inputs) => {
-			const res = await fetch(`${API_URL}/user`, {
-				method: 'PUT',
+			const res = await fetch(`${API_URL}/user/create`, {
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
