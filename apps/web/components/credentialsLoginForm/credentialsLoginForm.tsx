@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { signIn } from 'next-auth/react';
 
 type Inputs = {
-	username: string;
+	email: string;
 	password: string;
 };
 
@@ -31,14 +31,14 @@ export const CredentialsLoginForm = () => {
 
 	const onSubmit = async (data: Inputs) => {
 		const res = await signIn('credentials', {
-			username: data.username,
+			email: data.email,
 			password: data.password,
 			callbackUrl,
 			redirect: false,
 		});
 
 		if (res?.error) {
-			setError('username', {
+			setError('email', {
 				type: 'manual',
 				message: res.error,
 			});
@@ -65,9 +65,9 @@ export const CredentialsLoginForm = () => {
 					placeholder="jan.kowalski@gmail.com"
 					isRequired={true}
 					size="md"
-					validationState={errors.username ? 'invalid' : 'valid'}
-					errorMessage={errors.username?.message}
-					{...register('username', { required: true })}
+					validationState={errors.email ? 'invalid' : 'valid'}
+					errorMessage={errors.email?.message}
+					{...register('email', { required: true })}
 				/>
 				<Input
 					label="Password"
