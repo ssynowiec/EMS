@@ -12,7 +12,8 @@
     "start": "fastify start -l info server.ts",
     "dev": "concurrently \"pnpm dev:db\" \"pnpm dev:server\"",
     "dev:db": "docker compose up",
-    "dev:server": "tsx watch server.ts"
+    "dev:server": "tsx watch server.ts",
+    "postinstall": "prisma generate"
   },
   "type": "module",
   "keywords": [],
