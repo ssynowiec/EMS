@@ -39,7 +39,7 @@ server.get('/status', async () => ({ status: 'ok' }));
 // 	server.addSchema(schema);
 // }
 
-const PORT = (process.env.PORT || 4000) as number;
+const PORT = Number(process.env.PORT) || 4000;
 const start = async () => {
 	try {
 		await server.listen({ port: PORT });
