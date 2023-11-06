@@ -2,7 +2,7 @@
 
 import { type FastifyTypebox, prisma } from '../../server';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { AddUser } from './user.type';
+import { AddUserSchema } from './user.type';
 
 const getAllUsers = async () => {
 	return await prisma.user.findMany({
@@ -98,41 +98,45 @@ const deleteUser = async (
 
 export const userRoutes = async (server: FastifyTypebox) => {
 	server.get('/users', getAllUsers);
-	server.put('/user', { schema: { body: AddUser } }, async (request, reply) => {
-		const { name, email, password, repeatPassword } = request.body;
+	server.put(
+		'/user',
+		{ schema: { body: AddUserSchema } },
+		async (request, reply) => {
+			const { name, email, password, repeatPassword } = request.body;
 
-		// TODO: Full name Regex
-		const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
+			// TODO: Full name Regex
+			const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
 
-		// if (nameRegex.test(name)) {
-		// 	return reply
-		// 		.status(400)
-		// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
-		// }
+			// if (nameRegex.test(name)) {
+			// 	return reply
+			// 		.status(400)
+			// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
+			// }
 
-		const user = await prisma.user.findUnique({
-			where: { email },
-		});
-
-		if (user)
-			return reply.status(409).send({
-				error: { field: 'email', message: 'User already exists.' },
+			const user = await prisma.user.findUnique({
+				where: { email },
 			});
 
-		if (password !== repeatPassword)
-			return reply.status(400).send({
-				error: { field: 'password', message: 'Passwords do not match.' },
-			});
+			if (user)
+				return reply.status(409).send({
+					error: { field: 'email', message: 'User already exists.' },
+				});
 
-		const newUser = await prisma.user.create({
-			data: {
-				name,
-				email,
-				password,
-			},
-		});
-		return reply.status(200).send(newUser);
-	});
+			if (password !== repeatPassword)
+				return reply.status(400).send({
+					error: { field: 'password', message: 'Passwords do not match.' },
+				});
+
+			const newUser = await prisma.user.create({
+				data: {
+					name,
+					email,
+					password,
+				},
+			});
+			return reply.status(200).send(newUser);
+		},
+	);
 	server.post('/user', loginUser);
 	server.get('/user/:id', getUserById);
 	server.delete('/user/:email', deleteUser);
