@@ -7,7 +7,6 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from 'ui';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import clsx from 'clsx';
 
 type Inputs = {
 	name: string;
@@ -32,11 +31,12 @@ const validationSchema = yup.object({
 		.required()
 		.oneOf([yup.ref('password'), 'Passwords must match']),
 	termsAndConditions: yup
-		.bool()
+		.boolean()
+		.required('Accept Terms & Conditions is required')
 		.oneOf([true], 'Accept Terms & Conditions is required'),
 });
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env['NEXT_PUBLIC_API_URL'];
 
 export const RegisterForm = () => {
 	const searchParams = useSearchParams();
@@ -52,15 +52,15 @@ export const RegisterForm = () => {
 		register,
 		handleSubmit,
 		setError,
+		setValue,
 		formState: { errors },
 	} = useForm<Inputs>({
 		resolver: yupResolver(validationSchema),
 	});
 
 	const onSubmit = async (data: Inputs) => {
-		console.log(API_URL);
-		const res = await fetch(`${API_URL}/user`, {
-			method: 'PUT',
+		const res = await fetch(`${API_URL}/user/create`, {
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -81,7 +81,7 @@ export const RegisterForm = () => {
 				});
 		}
 
-		if (res.ok) return;
+		if (res.ok) return console.log('ok');
 
 		// if (res?.url) router.push(res.url);
 		// setSubmitting(false);
@@ -100,7 +100,7 @@ export const RegisterForm = () => {
 					placeholder="Jan Kowalski"
 					isRequired={true}
 					size="md"
-					validationState={errors.name ? 'invalid' : 'valid'}
+					isInvalid={Boolean(errors.name)}
 					errorMessage={errors.name?.message}
 					{...register('name', { required: true })}
 				/>
@@ -110,7 +110,7 @@ export const RegisterForm = () => {
 					placeholder="jan.kowalski@gmail.com"
 					isRequired={true}
 					size="md"
-					validationState={errors.email ? 'invalid' : 'valid'}
+					isInvalid={Boolean(errors.email)}
 					errorMessage={errors.email?.message}
 					{...register('email', { required: true })}
 				/>
@@ -119,7 +119,7 @@ export const RegisterForm = () => {
 					size="md"
 					isRequired={true}
 					placeholder="**********"
-					validationState={errors.password ? 'invalid' : 'valid'}
+					isInvalid={Boolean(errors.password)}
 					errorMessage={errors.password?.message}
 					{...register('password', { required: true })}
 					endContent={
@@ -143,7 +143,7 @@ export const RegisterForm = () => {
 					size="md"
 					isRequired={true}
 					placeholder="**********"
-					validationState={errors.repeatPassword ? 'invalid' : 'valid'}
+					isInvalid={Boolean(errors.repeatPassword)}
 					errorMessage={errors.repeatPassword?.message}
 					{...register('repeatPassword', { required: true })}
 					endContent={
@@ -162,14 +162,23 @@ export const RegisterForm = () => {
 					type={isVisible ? 'text' : 'password'}
 					className="w-full"
 				/>
-				<Checkbox
-					{...register('termsAndConditions')}
-					className={clsx(errors.termsAndConditions ? 'text-red-500' : '')}
-					required={true}
-					color="secondary"
-				>
-					Terms and conditions
-				</Checkbox>
+				<div>
+					<Checkbox
+						{...register('termsAndConditions')}
+						onValueChange={(value) => setValue('termsAndConditions', value)}
+						isInvalid={Boolean(errors.termsAndConditions)}
+						required={true}
+						color="secondary"
+					>
+						Terms and conditions
+					</Checkbox>
+					{Boolean(errors.termsAndConditions) && (
+						<p className="text-danger text-tiny m-0 p-0">
+							{errors?.termsAndConditions?.message}
+						</p>
+					)}
+				</div>
+
 				<Button
 					type="submit"
 					color="primary"
