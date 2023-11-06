@@ -1,4 +1,10 @@
-import fastify from 'fastify';
+import fastify, {
+	FastifyBaseLogger,
+	FastifyInstance,
+	RawReplyDefaultExpression,
+	RawRequestDefaultExpression,
+	RawServerDefault,
+} from 'fastify';
 import { PrismaClient } from '@prisma/client';
 import cors from '@fastify/cors';
 
@@ -7,6 +13,14 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 export const prisma = new PrismaClient();
 export const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
+
+export type FastifyTypebox = FastifyInstance<
+	RawServerDefault,
+	RawRequestDefaultExpression<RawServerDefault>,
+	RawReplyDefaultExpression<RawServerDefault>,
+	FastifyBaseLogger,
+	TypeBoxTypeProvider
+>;
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret';
 

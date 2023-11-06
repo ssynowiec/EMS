@@ -1,7 +1,7 @@
 'use strict';
 
-import { prisma, server } from '../../server';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { type FastifyTypebox, prisma } from '../../server';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AddUser } from './user.type';
 
 const getAllUsers = async () => {
@@ -96,7 +96,7 @@ const deleteUser = async (
 	}
 };
 
-export const userRoutes = async () => {
+export const userRoutes = async (server: FastifyTypebox) => {
 	server.get('/users', getAllUsers);
 	server.put('/user', { schema: { body: AddUser } }, async (request, reply) => {
 		const { name, email, password, repeatPassword } = request.body;
