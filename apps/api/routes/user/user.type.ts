@@ -1,8 +1,8 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const UserSchema = Type.Object({
-	name: Type.String(),
+export const LoginUserSchema = Type.Object({
 	email: Type.String(),
+	password: Type.String(),
 });
 
 export const AddUserSchema = Type.Object({
@@ -12,5 +12,15 @@ export const AddUserSchema = Type.Object({
 	repeatPassword: Type.String(),
 });
 
-export type UserType = Static<typeof UserSchema>;
+export const SearchUserByIdSchema = Type.Object({
+	id: Type.String(),
+});
+
+export const DeleteUserByEmailSchema = Type.Object({
+	email: Type.String(),
+});
+
+export type LoginUserType = Static<typeof LoginUserSchema>;
 export type AddUserType = Static<typeof AddUserSchema>;
+export type SearchUserByIdType = Static<typeof SearchUserByIdSchema>;
+export type DeleteUserByEmailType = Static<typeof DeleteUserByEmailSchema>;
