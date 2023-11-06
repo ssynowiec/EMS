@@ -24,8 +24,8 @@ export const userRoutes = async (server: FastifyTypebox) => {
 		});
 	});
 
-	server.put(
-		'/user',
+	server.post(
+		'/user/create',
 		{ schema: { body: AddUserSchema } },
 		async (request, reply) => {
 			const { name, email, password, repeatPassword } = request.body;
