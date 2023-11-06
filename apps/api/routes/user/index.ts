@@ -4,6 +4,7 @@ import { type FastifyTypebox, prisma } from '../../server';
 import {
 	AddUserSchema,
 	DeleteUserByEmailSchema,
+	LoginUserSchema,
 	SearchUserByIdSchema,
 } from './user.type';
 
@@ -65,7 +66,7 @@ export const userRoutes = async (server: FastifyTypebox) => {
 
 	server.post(
 		'/user',
-		{ schema: { body: AddUserSchema } },
+		{ schema: { body: LoginUserSchema } },
 		async (request, reply) => {
 			const { email, password } = request.body;
 			console.log('email', email);
