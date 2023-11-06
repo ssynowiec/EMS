@@ -11,6 +11,7 @@ type UsersPageProps = {
 		search: string;
 		rowsPerPage: string;
 		page: string;
+		roles: string;
 	};
 };
 
