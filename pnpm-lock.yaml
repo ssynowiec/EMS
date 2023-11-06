@@ -32,9 +32,15 @@ importers:
       '@fastify/sensible':
         specifier: ^5.5.0
         version: 5.5.0
+      '@fastify/type-provider-typebox':
+        specifier: ^3.5.0
+        version: 3.5.0(@sinclair/typebox@0.31.22)
       '@prisma/client':
         specifier: 5.2.0
         version: 5.2.0(prisma@5.5.2)
+      '@sinclair/typebox':
+        specifier: ^0.31.22
+        version: 0.31.22
       eslint:
         specifier: ^8.52.0
         version: 8.53.0
@@ -825,6 +831,14 @@ packages:
       http-errors: 2.0.0
       type-is: 1.6.18
       vary: 1.1.2
+    dev: false
+
+  /@fastify/type-provider-typebox@3.5.0(@sinclair/typebox@0.31.22):
+    resolution: {integrity: sha512-f48uGzvLflE/y4pvXOS8qjAC+mZmlqev9CPHnB8NDsBSL4EbeydO61IgPuzOkeNlAYeRP9Y56UOKj1XWFibgMw==}
+    peerDependencies:
+      '@sinclair/typebox': '>=0.26 <=0.31'
+    dependencies:
+      '@sinclair/typebox': 0.31.22
     dev: false
 
   /@formatjs/ecma402-abstract@1.17.2:
@@ -3063,6 +3077,10 @@ packages:
 
   /@rushstack/eslint-patch@1.5.1:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
+    dev: false
+
+  /@sinclair/typebox@0.31.22:
+    resolution: {integrity: sha512-CKviMgpcXd8q8IsQQD8cCleswe4/EkQRcOqtVQcP1e+XUyszjJYjgL5Dtf3XunWZc2zEGmQPqJEsq08NiW9xfw==}
     dev: false
 
   /@swc/helpers@0.4.14:

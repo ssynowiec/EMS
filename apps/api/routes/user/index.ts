@@ -7,6 +7,7 @@ import {
 	FastifyReply,
 	FastifyRequest,
 } from 'fastify';
+import { AddUser, AddUserType } from './user.type';
 
 const getAllUsers = async () => {
 	return await prisma.user.findMany({
@@ -100,58 +101,86 @@ const deleteUser = async (
 	}
 };
 
-const addUser = async (
-	request: FastifyRequest<{
-		Body: {
-			name: string;
-			email: string;
-			password: string;
-			repeatPassword: string;
-		};
-	}>,
-	reply: FastifyReply,
-) => {
-	const { name, email, password, repeatPassword } = request.body;
-
-	// TODO: Full name Regex
-	const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
-
-	// if (nameRegex.test(name)) {
-	// 	return reply
-	// 		.status(400)
-	// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
-	// }
-
-	const user = await prisma.user.findUnique({
-		where: { email },
-	});
-
-	if (user)
-		return reply.status(409).send({
-			error: { field: 'email', message: 'User already exists.' },
-		});
-
-	if (password !== repeatPassword)
-		return reply.status(400).send({
-			error: { field: 'password', message: 'Passwords do not match.' },
-		});
-
-	const newUser = await prisma.user.create({
-		data: {
-			name,
-			email,
-			password,
-		},
-	});
-	return reply.status(200).send(newUser);
-};
+// const addUser = async (request, reply: FastifyReply) => {
+// 	const { name, email, password, repeatPassword } = request.body;
+//
+// 	// TODO: Full name Regex
+// 	const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
+//
+// 	// if (nameRegex.test(name)) {
+// 	// 	return reply
+// 	// 		.status(400)
+// 	// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
+// 	// }
+//
+// 	const user = await prisma.user.findUnique({
+// 		where: { email },
+// 	});
+//
+// 	if (user)
+// 		return reply.status(409).send({
+// 			error: { field: 'email', message: 'User already exists.' },
+// 		});
+//
+// 	if (password !== repeatPassword)
+// 		return reply.status(400).send({
+// 			error: { field: 'password', message: 'Passwords do not match.' },
+// 		});
+//
+// 	const newUser = await prisma.user.create({
+// 		data: {
+// 			name,
+// 			email,
+// 			password,
+// 		},
+// 	});
+// 	return reply.status(200).send(newUser);
+// };
 
 export const userRoutes = async (
 	server: FastifyInstance,
 	options: FastifyPluginOptions,
 ) => {
 	server.get('/users', getAllUsers);
-	server.put('/user', addUser);
+	server.put<{ Body: AddUserType }>(
+		'/user',
+		{ schema: { body: AddUser } },
+		async (request, reply) => {
+			const { name, email, password, repeatPassword } = request.body;
+
+			// TODO: Full name Regex
+			const nameRegex = /^[A-Z]([-']?[a-z]+)*( [A-Z](([-'][A-Z])?[a-z]+)*)+$/gm;
+
+			// if (nameRegex.test(name)) {
+			// 	return reply
+			// 		.status(400)
+			// 		.send({ errors: { name: { message: 'Invalid Full name.' } } });
+			// }
+
+			const user = await prisma.user.findUnique({
+				where: { email },
+			});
+
+			if (user)
+				return reply.status(409).send({
+					error: { field: 'email', message: 'User already exists.' },
+				});
+
+			if (password !== repeatPassword)
+				return reply.status(400).send({
+					error: { field: 'password', message: 'Passwords do not match.' },
+				});
+
+			const newUser = await prisma.user.create({
+				data: {
+					name,
+					email,
+					password,
+				},
+			});
+			return reply.status(200).send(newUser);
+		},
+	);
 	server.post('/user', loginUser);
 	server.get('/user/:id', getUserById);
 	server.delete('/user/:email', deleteUser);

@@ -3,9 +3,10 @@ import { PrismaClient } from '@prisma/client';
 import cors from '@fastify/cors';
 
 import { userRoutes } from './routes/user';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 export const prisma = new PrismaClient();
-export const server = fastify();
+export const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret';
 
