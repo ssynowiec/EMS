@@ -15,6 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { PlusIcon } from 'ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 type Inputs = {
 	name: string;
@@ -76,13 +77,43 @@ export const AddNewUser = () => {
 				throw new Error(resJson.error.message);
 			}
 		},
-		onSuccess: () => {
+		onSuccess: (data, inputs) => {
+			const currentDataTime = new Date().toLocaleString();
+
+			const userEmail = inputs.email;
+
 			queryClient.invalidateQueries({ queryKey: ['users'] });
 			onOpenChange();
+			toast.success('User added successfully', {
+				description: (
+					<p>
+						User <span className="font-extrabold">{userEmail}</span> has been
+						added successfully
+						<br />
+						<span className="text-[10px]">{currentDataTime}</span>
+					</p>
+				),
+			});
 			reset();
 		},
-		onError: () => {
-			console.log('error');
+		onError: (error, inputs) => {
+			const currentDataTime = new Date().toLocaleString();
+
+			const userEmail = inputs.email;
+
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+
+			toast.error('User not added', {
+				description: (
+					<p>
+						Something went wrong, user{' '}
+						<span className="font-extrabold">{userEmail}</span> has not been
+						added
+						<br />
+						<span className="text-[10px]">{currentDataTime}</span>
+					</p>
+				),
+			});
 		},
 	});
 
