@@ -76,7 +76,7 @@ const getRegisteredUsersLastWeek = async () => {
 		const date = new Date(today);
 		date.setDate(today.getDate() - (6 - i));
 
-		usersData.forEach((user) => {
+		usersData.forEach((user: { name: string; createdAt: Date }) => {
 			const userDate = new Date(user.createdAt);
 			if (
 				userDate.getDate() === date.getDate() &&
