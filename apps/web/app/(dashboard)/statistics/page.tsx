@@ -1,11 +1,16 @@
-import { StatsPieChart } from '../../../components/statsPieChart/StatsPieChart';
-import { Metadata } from 'next';
-
-const users = [
-	{ name: 'Active', value: 1 },
-	{ name: 'Unverified', value: 17 },
-	{ name: 'Banned', value: 1 },
-];
+import { StatsPieChartWithLegend } from '../../../components/statsPieChart/StatsPieChartWithLegend';
+import type { Metadata } from 'next';
+import {
+	AreaChart as AreaChartTremor,
+	Card,
+	Grid,
+	Tab,
+	TabGroup,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Title,
+} from '@tremor/react';
 
 export const metadata: Metadata = {
 	title: 'Statistics',
@@ -20,7 +25,11 @@ const getUsers = async () => {
 		cache: 'no-cache',
 	});
 
-	const data = await res.json();
+	return await res.json();
+};
+
+const usersWithStatus = async () => {
+	const usersData = await getUsers();
 
 	function countUsersWithStatus(
 		users: { name: string; status: string }[],
@@ -30,9 +39,9 @@ const getUsers = async () => {
 		return filteredUsers.length;
 	}
 
-	const activeUsers = countUsersWithStatus(data, 'ACTIVE');
-	const bannedUsers = countUsersWithStatus(data, 'BLOCKED');
-	const unverifiedUsers = countUsersWithStatus(data, 'UNVERIFIED');
+	const activeUsers = countUsersWithStatus(usersData, 'ACTIVE');
+	const bannedUsers = countUsersWithStatus(usersData, 'BLOCKED');
+	const unverifiedUsers = countUsersWithStatus(usersData, 'UNVERIFIED');
 
 	console.log(activeUsers, bannedUsers, unverifiedUsers);
 
@@ -43,13 +52,131 @@ const getUsers = async () => {
 	];
 };
 
+const getRegisteredUsersLastWeek = async () => {
+	const today = new Date();
+	const monthNames = [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec',
+	];
+	const chartData: { date: string; 'Registered users': number }[] = [];
+	const usersData = await getUsers();
+
+	for (let i = 0; i < 7; i++) {
+		let registeredUsers = 0;
+		const date = new Date(today);
+		date.setDate(today.getDate() - (6 - i));
+
+		usersData.forEach((user) => {
+			const userDate = new Date(user.createdAt);
+			if (
+				userDate.getDate() === date.getDate() &&
+				userDate.getMonth() === date.getMonth()
+			) {
+				registeredUsers++;
+			}
+		});
+
+		const day = date.getDate();
+		const month = monthNames[date.getMonth()];
+
+		chartData.push({
+			date: i === 6 ? 'today' : `${day} ${month}`,
+			'Registered users': registeredUsers,
+		});
+	}
+
+	return chartData;
+};
+
+const getUsersByRole = async () => {
+	const usersData = await getUsers();
+
+	function countUsersWithRole(
+		users: { name: string; role: string }[],
+		role: string,
+	): number {
+		const filteredUsers = users.filter((user) => user.role === role);
+		return filteredUsers.length;
+	}
+
+	const admins = countUsersWithRole(usersData, 'ADMIN');
+	const users = countUsersWithRole(usersData, 'USER');
+
+	return [
+		{ name: 'Admins', value: admins },
+		{ name: 'Users', value: users },
+	];
+};
+
 const Statistics = async () => {
-	const data = await getUsers();
+	const usersStatus = await usersWithStatus();
+	const registeredUsersLastWeek = await getRegisteredUsersLastWeek();
+	const usersByRole = await getUsersByRole();
 
 	return (
 		<>
 			<h1>Stats</h1>
-			<StatsPieChart title={'Users'} data={data} />
+
+			<TabGroup className="mt-6">
+				<TabList>
+					<Tab>Users</Tab>
+					<Tab>Detail</Tab>
+				</TabList>
+				<TabPanels>
+					<TabPanel>
+						<Grid numItemsMd={2} numItemsLg={3} className="gap-6 mt-6">
+							<StatsPieChartWithLegend
+								title="Users status"
+								data={usersStatus}
+								categories={[
+									'Active users',
+									'Unverified users',
+									'Blocked users',
+								]}
+								colors={['green', 'yellow', 'red']}
+							/>
+							<StatsPieChartWithLegend
+								title="Users by role"
+								data={usersByRole}
+								categories={['Admins', 'Users']}
+								type="pie"
+								colors={['red', 'green', 'indigo', 'rose', 'cyan', 'amber']}
+							/>
+							<Card></Card>
+						</Grid>
+						<div className="mt-6">
+							<Card>
+								<Title>Users registered on last week</Title>
+								<AreaChartTremor
+									className="h-72 mt-4"
+									data={registeredUsersLastWeek}
+									index="date"
+									showAnimation={true}
+									categories={['Registered users']}
+									colors={['indigo']}
+								/>
+							</Card>
+						</div>
+					</TabPanel>
+					<TabPanel>
+						<div className="mt-6">
+							<Card>
+								<div className="h-96" />
+							</Card>
+						</div>
+					</TabPanel>
+				</TabPanels>
+			</TabGroup>
 		</>
 	);
 };

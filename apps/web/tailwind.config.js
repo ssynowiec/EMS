@@ -23,7 +23,7 @@ module.exports = {
 						faint: '#eff6ff', // blue-50
 						muted: '#bfdbfe', // blue-200
 						subtle: '#60a5fa', // blue-400
-						DEFAULT: '#3b82f6', // blue-500
+						DEFAULT: '#8804FC', // blue-500
 						emphasis: '#1d4ed8', // blue-700
 						inverted: '#ffffff', // white
 					},
@@ -53,7 +53,7 @@ module.exports = {
 						faint: '#0B1229', // custom
 						muted: '#172554', // blue-950
 						subtle: '#1e40af', // blue-800
-						DEFAULT: '#3b82f6', // blue-500
+						DEFAULT: '#8804FC', // blue-500
 						emphasis: '#60a5fa', // blue-400
 						inverted: '#030712', // gray-950
 					},
