@@ -19,6 +19,7 @@ const userSidebarLinks: SidebarLink[] = [
 		title: 'Settings',
 		icon: <SettingsIcon />,
 	},
+	{ href: '/statistics', title: 'Statistics' },
 	{ href: '/users', title: 'Users' },
 	{ href: '/Logout', title: 'Home' },
 ];
