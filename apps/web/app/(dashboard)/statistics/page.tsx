@@ -28,9 +28,7 @@ const getUsers = async () => {
 	return await res.json();
 };
 
-const usersWithStatus = async () => {
-	const usersData = await getUsers();
-
+const usersWithStatus = (usersData) => {
 	function countUsersWithStatus(
 		users: { name: string; status: string }[],
 		status: string,
@@ -52,7 +50,7 @@ const usersWithStatus = async () => {
 	];
 };
 
-const getRegisteredUsersLastWeek = async () => {
+const getRegisteredUsersLastWeek = (usersData) => {
 	const today = new Date();
 	const monthNames = [
 		'Jan',
@@ -69,7 +67,6 @@ const getRegisteredUsersLastWeek = async () => {
 		'Dec',
 	];
 	const chartData: { date: string; 'Registered users': number }[] = [];
-	const usersData = await getUsers();
 
 	for (let i = 0; i < 7; i++) {
 		let registeredUsers = 0;
@@ -98,9 +95,7 @@ const getRegisteredUsersLastWeek = async () => {
 	return chartData;
 };
 
-const getUsersByRole = async () => {
-	const usersData = await getUsers();
-
+const getUsersByRole = (usersData) => {
 	function countUsersWithRole(
 		users: { name: string; role: string }[],
 		role: string,
@@ -119,9 +114,11 @@ const getUsersByRole = async () => {
 };
 
 const Statistics = async () => {
-	const usersStatus = await usersWithStatus();
-	const registeredUsersLastWeek = await getRegisteredUsersLastWeek();
-	const usersByRole = await getUsersByRole();
+	const users = await getUsers();
+
+	const usersStatus = usersWithStatus(users);
+	const registeredUsersLastWeek = getRegisteredUsersLastWeek(users);
+	const usersByRole = getUsersByRole(users);
 
 	return (
 		<>
