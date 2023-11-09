@@ -1,10 +1,11 @@
 import { Card, CardBody } from '@nextui-org/react';
+import { env } from '../env.d.mjs';
 
 type DashboardCardProps = {
 	title: string;
 };
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 export const DashboardCard = async ({ title }: DashboardCardProps) => {
 	const res = await fetch(`${API_URL}/users`);

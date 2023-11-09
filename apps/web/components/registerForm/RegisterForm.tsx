@@ -7,6 +7,7 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from 'ui';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { env } from '../../env.d.mjs';
 
 type Inputs = {
 	name: string;
@@ -36,7 +37,7 @@ const validationSchema = yup.object({
 		.oneOf([true], 'Accept Terms & Conditions is required'),
 });
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 export const RegisterForm = () => {
 	const searchParams = useSearchParams();

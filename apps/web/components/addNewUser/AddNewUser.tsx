@@ -16,6 +16,7 @@ import * as yup from 'yup';
 import { PlusIcon } from 'ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { env } from '../../env.d.mjs';
 
 type Inputs = {
 	name: string;
@@ -40,7 +41,7 @@ const validationSchema = yup.object({
 		.oneOf([yup.ref('password'), 'Passwords must match']),
 });
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 export const AddNewUser = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();

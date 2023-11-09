@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { UserAccount } from '../../../../../components/userAccount/UserAccount';
+import { env } from '../../../../../env.d.mjs';
 
 type EditUserPageProps = {
 	params: {
@@ -9,7 +10,7 @@ type EditUserPageProps = {
 	};
 };
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 const EditUserPage = ({ params: { id } }: EditUserPageProps) => {
 	const query = useQuery({

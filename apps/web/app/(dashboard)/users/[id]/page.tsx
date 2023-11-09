@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Button, Link } from '@nextui-org/react';
 import { EditIcon } from 'ui';
+import { env } from '../../../../env.d.mjs';
 
 type UserPageProps = {
 	params: {
@@ -13,7 +14,7 @@ type Props = {
 	searchParams: { [key: string]: string | string[] | undefined };
 };
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 const getUser = async (userId: string) => {
 	const res = await fetch(`${API_URL}/user/${userId}`);

@@ -5,23 +5,24 @@ import Facebook from 'next-auth/providers/facebook';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { env } from '../../../../env.d.mjs';
 
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
-	secret: process.env['NEXTAUTH_SECRET'] as string,
+	secret: env.NEXTAUTH_SECRET as string,
 	session: {
 		strategy: 'jwt',
 	},
 	providers: [
 		Google({
-			clientId: process.env['GOOGLE_CLIENT_ID'] as string,
-			clientSecret: process.env['GOOGLE_CLIENT_SECRET'] as string,
+			clientId: env.GOOGLE_CLIENT_ID as string,
+			clientSecret: env.GOOGLE_CLIENT_SECRET as string,
 		}),
 		// LinkedIn({
-		// 	clientId: process.env.LINKEDIN_CLIENT_ID as string,
-		// 	clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+		// 	clientId: env.LINKEDIN_CLIENT_ID as string,
+		// 	clientSecret: env.LINKEDIN_CLIENT_SECRET as string,
 		// 	wellKnown:
 		// 		'https://www.linkedin.com/oauth/.well-known/openid-configuration',
 		// 	authorization: {
@@ -31,12 +32,12 @@ export const authOptions: NextAuthOptions = {
 		// 	},
 		// }),
 		Github({
-			clientId: process.env['GITHUB_CLIENT_ID'] as string,
-			clientSecret: process.env['GITHUB_CLIENT_SECRET'] as string,
+			clientId: env.GITHUB_CLIENT_ID as string,
+			clientSecret: env.GITHUB_CLIENT_SECRET as string,
 		}),
 		Facebook({
-			clientId: process.env['FACEBOOK_CLIENT_ID'] as string,
-			clientSecret: process.env['FACEBOOK_CLIENT_SECRET'] as string,
+			clientId: env.FACEBOOK_CLIENT_ID as string,
+			clientSecret: env.FACEBOOK_CLIENT_SECRET as string,
 		}),
 		Credentials({
 			name: 'Credentials',
@@ -54,7 +55,7 @@ export const authOptions: NextAuthOptions = {
 					password: credentials?.password,
 				};
 
-				const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+				const API_URL = env.NEXT_PUBLIC_API_URL;
 
 				const res = await fetch(`${API_URL}/user`, {
 					method: 'POST',

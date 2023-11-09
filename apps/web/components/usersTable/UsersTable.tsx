@@ -21,6 +21,7 @@ import { EditIcon, EyeIcon } from 'ui';
 import { DeleteButton } from '../deleteButton/DeleteButton';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { env } from '../../env.d.mjs';
 
 export const columns = [
 	{
@@ -70,7 +71,7 @@ type UsersTableProps = {
 };
 
 const INITIAL_VISIBLE_COLUMNS = ['name', 'email', 'role', 'actions'];
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = env.NEXT_PUBLIC_API_URL;
 
 export const UsersTable = ({ filters }: UsersTableProps) => {
 	const queryClient = useQueryClient();
