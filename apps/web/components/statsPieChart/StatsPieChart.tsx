@@ -8,7 +8,7 @@ interface StatsPieChartProps {
 }
 
 const valueFormatter = (number: number) =>
-	`total: ${new Intl.NumberFormat('pl').format(number).toString()}`;
+	new Intl.NumberFormat('pl').format(number).toString();
 
 export const StatsPieChart = ({ title, data }: StatsPieChartProps) => {
 	return (
@@ -20,6 +20,7 @@ export const StatsPieChart = ({ title, data }: StatsPieChartProps) => {
 				category="value"
 				index="name"
 				valueFormatter={valueFormatter}
+				showAnimation={true}
 				colors={['green', 'yellow', 'red']}
 			/>
 		</Card>
