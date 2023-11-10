@@ -1,4 +1,4 @@
-import { StatsPieChartWithLegend } from '../../../components/statsPieChart/StatsPieChartWithLegend';
+import { StatsPieChartWithLegend } from '@/components/statsPieChart/StatsPieChartWithLegend';
 import type { Metadata } from 'next';
 import {
 	AreaChart as AreaChartTremor,

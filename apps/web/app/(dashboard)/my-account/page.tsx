@@ -1,6 +1,6 @@
 'use client';
 
-import { UserAccount } from '../../../components/userAccount/UserAccount';
+import { UserAccount } from '@/components/userAccount/UserAccount';
 import { useSession } from 'next-auth/react';
 
 const MyAccount = () => {

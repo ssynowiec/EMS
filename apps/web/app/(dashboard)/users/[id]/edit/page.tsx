@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { UserAccount } from '../../../../../components/userAccount/UserAccount';
+import { UserAccount } from '@/components/userAccount/UserAccount';
 import { env } from '../../../../../env.d.mjs';
 
 type EditUserPageProps = {
