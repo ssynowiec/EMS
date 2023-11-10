@@ -7,6 +7,7 @@ import {
 	LoginUserSchema,
 	SearchUserByIdSchema,
 } from './user.type';
+import bcrypt from 'bcrypt';
 
 export const userRoutes = async (server: FastifyTypebox) => {
 	server.get('/users', async () => {
@@ -53,11 +54,14 @@ export const userRoutes = async (server: FastifyTypebox) => {
 					error: { field: 'password', message: 'Passwords do not match.' },
 				});
 
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(password, salt);
+
 			const newUser = await prisma.user.create({
 				data: {
 					name,
 					email,
-					password,
+					password: hashedPassword,
 				},
 			});
 			return reply.status(200).send(newUser);
@@ -89,7 +93,9 @@ export const userRoutes = async (server: FastifyTypebox) => {
 				return reply.status(400).send({ message: 'Please verify your email' });
 			}
 
-			if (user.password !== password) {
+			const isPasswordValid = await bcrypt.compare(password, user.password);
+
+			if (!isPasswordValid) {
 				return reply
 					.status(401)
 					.send({ message: 'Invalid username or password' });
