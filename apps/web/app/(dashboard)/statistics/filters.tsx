@@ -38,10 +38,10 @@ export const getRegisteredUsersLastWeek = (usersData) => {
 	];
 	const chartData: { date: string; 'Registered users': number }[] = [];
 
-	for (let i = 0; i < 7; i++) {
+	for (let i = 6; i >= 0; i--) {
 		let registeredUsers = 0;
 		const date = new Date(today);
-		date.setDate(today.getDate() - (6 - i));
+		date.setDate(today.getDate() - i);
 
 		usersData.forEach((user: { name: string; createdAt: Date }) => {
 			const userDate = new Date(user.createdAt);
@@ -57,7 +57,7 @@ export const getRegisteredUsersLastWeek = (usersData) => {
 		const month = monthNames[date.getMonth()];
 
 		chartData.push({
-			date: i === 6 ? 'today' : `${day} ${month}`,
+			date: i === 0 ? 'today' : `${day} ${month}`,
 			'Registered users': registeredUsers,
 		});
 	}
