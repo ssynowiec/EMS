@@ -63,6 +63,16 @@ export const userRoutes = async (server: FastifyTypebox) => {
 					email,
 					password: hashedPassword,
 				},
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					emailVerified: true,
+					status: true,
+					role: true,
+					createdAt: true,
+					updatedAt: true,
+				},
 			});
 			return reply.status(200).send(newUser);
 		},
