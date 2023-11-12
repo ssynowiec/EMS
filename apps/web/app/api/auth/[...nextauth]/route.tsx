@@ -6,11 +6,12 @@ import Credentials from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { env } from '../../../../env.d.mjs';
+import type { Adapter } from 'next-auth/adapters';
 
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
-	adapter: PrismaAdapter(prisma),
+	adapter: PrismaAdapter(prisma) as Adapter,
 	secret: env.NEXTAUTH_SECRET as string,
 	session: {
 		strategy: 'jwt',
