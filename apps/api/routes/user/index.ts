@@ -9,6 +9,7 @@ import {
 	VerifyUserSchema,
 } from './user.type';
 import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 
 export const userRoutes = async (server: FastifyTypebox) => {
 	server.get('/users', async () => {
@@ -75,6 +76,15 @@ export const userRoutes = async (server: FastifyTypebox) => {
 					updatedAt: true,
 				},
 			});
+
+			await prisma.verificationToken.create({
+				data: {
+					userId: newUser.id,
+					token: `${randomUUID()}${randomUUID()}`.replace(/-/g, ''),
+					expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+				},
+			});
+
 			return reply.status(200).send(newUser);
 		},
 	);
