@@ -90,6 +90,20 @@ export const authOptions: NextAuthOptions = {
 			session.user.role = token.role;
 			return session;
 		},
+		signIn: async ({ user, account, profile }) => {
+			if (account.provider !== 'credentials' && user.status === 'UNVERIFIED') {
+				await prisma.user.update({
+					where: {
+						id: user.id,
+					},
+					data: {
+						emailVerified: new Date(),
+						status: 'ACTIVE',
+					},
+				});
+			}
+			return true;
+		},
 	},
 	pages: {
 		signIn: '/login',
