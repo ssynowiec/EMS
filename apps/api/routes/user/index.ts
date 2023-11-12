@@ -6,6 +6,7 @@ import {
 	DeleteUserByEmailSchema,
 	LoginUserSchema,
 	SearchUserByIdSchema,
+	VerifyUserSchema,
 } from './user.type';
 import bcrypt from 'bcrypt';
 
@@ -161,6 +162,65 @@ export const userRoutes = async (server: FastifyTypebox) => {
 				reply.code(500);
 				return { error: 'Wystąpił błąd podczas usuwania rekordu' };
 			}
+		},
+	);
+
+	server.get(
+		'/user/verify/:token',
+		{ schema: { params: VerifyUserSchema } },
+		async (request, reply) => {
+			const { token } = request.params;
+
+			const verificationToken = await prisma.verificationToken.findUnique({
+				where: { token },
+			});
+
+			if (!verificationToken) {
+				return reply.status(404).send({ error: 'Invalid token' });
+			}
+
+			if (verificationToken.expires < new Date()) {
+				return reply.status(400).send({ error: 'Token expired' });
+			}
+
+			const user = await prisma.user.findUnique({
+				where: { id: verificationToken.userId },
+			});
+
+			if (!user) {
+				return reply.status(404).send({ error: 'Your token is invalid' });
+			}
+
+			if (verificationToken.used && user.status === 'ACTIVE') {
+				return reply.status(200).send({ message: 'Your account is active' });
+			}
+
+			if (user.emailVerified) {
+				return reply
+					.status(400)
+					.send({ error: 'Your email is already verified' });
+			}
+
+			if (user.status === 'BLOCKED') {
+				return reply
+					.status(400)
+					.send({ error: 'Your account is blocked, you cannot activate it' });
+			}
+
+			await prisma.user.update({
+				where: { id: verificationToken.userId },
+				data: { emailVerified: new Date(), status: 'ACTIVE' },
+			});
+
+			await prisma.verificationToken.update({
+				where: { token },
+				data: { used: true },
+			});
+
+			return reply.send({
+				message:
+					'Your account has been successfully activated, you can now log in to your account',
+			});
 		},
 	);
 };

@@ -20,7 +20,12 @@ export const DeleteUserByEmailSchema = Type.Object({
 	email: Type.String(),
 });
 
+export const VerifyUserSchema = Type.Object({
+	token: Type.String(),
+});
+
 export type LoginUserType = Static<typeof LoginUserSchema>;
 export type AddUserType = Static<typeof AddUserSchema>;
 export type SearchUserByIdType = Static<typeof SearchUserByIdSchema>;
 export type DeleteUserByEmailType = Static<typeof DeleteUserByEmailSchema>;
+export type VerifyUserType = Static<typeof VerifyUserSchema>;
