@@ -62,9 +62,11 @@ model User {
 }
 
 model VerificationToken {
-  identifier String
+  identifier String @default(uuid())
   token      String   @unique
   expires    DateTime
+  used       Boolean  @default(false)
+  userId     String
 
   @@unique([identifier, token])
 }
