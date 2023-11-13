@@ -2,7 +2,7 @@
 
 import { Image, Link } from '@nextui-org/react';
 import type { ReactNode } from 'react';
-import { HomeIcon, SettingsIcon } from 'ui';
+import { HomeIcon, PlusIcon, SettingsIcon } from 'ui';
 import { SidebarSection } from '../sidebarSection/SidebarSection';
 import { SidebarItem } from '../sidebarItem/SidebarItem';
 import { SidebarFooter } from '../sidebarFooter/sidebarFooter';
@@ -12,6 +12,7 @@ export type SidebarLink = {
 	href: string;
 	title: string;
 	icon?: ReactNode;
+	color?: string;
 };
 
 const userSidebarLinks: SidebarLink[] = [
@@ -25,11 +26,25 @@ const userSidebarLinks: SidebarLink[] = [
 	{ href: '/Logout', title: 'Home' },
 ];
 
+const mainSidebarLinks: SidebarLink[] = [
+	{
+		href: '/add-event',
+		title: 'Add Event',
+		icon: <PlusIcon />,
+		color: 'purple',
+	},
+];
+
 const sidebarSections = [
+	{
+		title: '',
+		links: mainSidebarLinks,
+		permissions: ['ADMIN', 'USER'],
+	},
 	{
 		title: 'Admin',
 		links: userSidebarLinks,
-		permission: 'ADMIN',
+		permissions: ['ADMIN'],
 	},
 ];
 
@@ -50,7 +65,7 @@ export const DashboardSidebar = () => {
 						<SidebarItem href="/dashboard" title="Home" icon={<HomeIcon />} />
 						{sidebarSections.map(
 							(section) =>
-								section.permission === userRole && (
+								section.permissions.includes(userRole) && (
 									<SidebarSection
 										key={section.title}
 										title={section.title}

@@ -15,6 +15,7 @@ export const SidebarSection = ({ title, links }: SidebarSectionProps) => {
 					href={link.href}
 					title={link.title}
 					icon={link.icon}
+					color={link.color}
 					key={link.href}
 				/>
 			))}
