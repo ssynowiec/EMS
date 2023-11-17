@@ -22,6 +22,8 @@ export const env = createEnv({
 	},
 	client: {
 		NEXT_PUBLIC_API_URL: z.string(),
+
+		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
@@ -41,6 +43,8 @@ export const env = createEnv({
 
 		NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 		NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+
+		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
 	},
 	emptyStringAsUndefined: true,
 });
