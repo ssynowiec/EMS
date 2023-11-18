@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
-import { RegisterPage } from '../../../components/registerPage/RegisterPage';
+import { RegisterPage } from '@/components/registerPage/RegisterPage';
 
 export const metadata: Metadata = {
 	title: 'Create your account',

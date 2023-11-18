@@ -1,4 +1,4 @@
-import { LoginPage } from '../../../components/loginPage/LoginPage';
+import { LoginPage } from '@/components/loginPage/LoginPage';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../api/auth/[...nextauth]/route';

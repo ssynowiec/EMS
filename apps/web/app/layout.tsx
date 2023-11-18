@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
-import { Provider } from '../components/provider/Provider';
+import { Provider } from '@/components/provider/Provider';
 import { authOptions } from './api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth/next';
 import { Toaster } from 'sonner';

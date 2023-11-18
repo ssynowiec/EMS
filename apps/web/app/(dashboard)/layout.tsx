@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { DashboardNavbar } from '../../components/dashboardNavbar/DashboardNavbar';
-import { DashboardSidebar } from '../../components/dashboardSidebar/DashboardSidebar';
+import { DashboardNavbar } from '@/components/dashboardNavbar/DashboardNavbar';
+import { DashboardSidebar } from '@/components/dashboardSidebar/DashboardSidebar';
 import { SidebarProvider } from './sidebarContext';
 
 type DashboardLayoutProps = {
