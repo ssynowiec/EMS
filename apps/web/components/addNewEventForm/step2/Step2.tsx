@@ -90,15 +90,6 @@ export const Step2 = () => {
 						</div>
 					));
 				}}
-				color="default"
-				disableAnimation={false}
-				disableSelectorIconRotation={false}
-				fullWidth={false}
-				radius="md"
-				size="md"
-				variant="flat"
-				isMultiline={false}
-				isLabelPlaceholder={false}
 			>
 				{(user) => (
 					<SelectItem key={user.id} textValue={user.name}>
@@ -125,15 +116,6 @@ export const Step2 = () => {
 				selectedKeys={[eventType]}
 				disallowEmptySelection={true}
 				onChange={handleSelectionChange}
-				color="default"
-				disableAnimation={false}
-				disableSelectorIconRotation={false}
-				fullWidth={false}
-				radius="md"
-				size="md"
-				variant="flat"
-				isMultiline={false}
-				isLabelPlaceholder={false}
 			>
 				<SelectItem key="online" value="online">
 					online
