@@ -23,5 +23,5 @@ export default withAuth({
 });
 
 export const config = {
-	matcher: ['/admin', '/dashboard', '/my-account', '/users'],
+	matcher: ['/admin', '/dashboard', '/my-account', '/users', '/add-event'],
 };
