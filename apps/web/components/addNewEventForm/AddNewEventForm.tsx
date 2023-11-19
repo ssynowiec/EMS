@@ -55,7 +55,10 @@ const onSubmit = async (data: Inputs) => {
 			slug: data.eventUrl,
 			thumbnail: thumbnailUrl,
 			startDate: data.eventStartDate,
-			endDate: data.eventEndDate,
+			endDate:
+				data.eventEndDate === undefined
+					? data.eventStartDate
+					: data.eventEndDate,
 			startTime: data.eventStartTime,
 			endTime: data.eventEndTime,
 			onlineLocation: data.eventOnlineLocation,
