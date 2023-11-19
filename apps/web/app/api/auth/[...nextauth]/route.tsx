@@ -94,7 +94,7 @@ export const authOptions: NextAuthOptions = {
 			session.user.role = token.role;
 			return session;
 		},
-		signIn: async ({ user, account, profile }) => {
+		signIn: async ({ user, account }) => {
 			if (account) {
 				if (
 					account.provider !== 'credentials' &&
@@ -109,7 +109,6 @@ export const authOptions: NextAuthOptions = {
 							status: 'ACTIVE',
 						},
 					});
-					g;
 				}
 			}
 
