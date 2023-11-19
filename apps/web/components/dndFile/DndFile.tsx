@@ -1,13 +1,15 @@
 import { Image } from '@nextui-org/react';
+import { useFormContext } from 'react-hook-form';
 
 export const DndFile = ({
 	label,
 	getRootProps,
 	getInputProps,
 	isDragActive,
-	register,
 	fileThumbnail,
 }) => {
+	const { register } = useFormContext();
+
 	return (
 		<>
 			<label className="text-small font-medium">{label}</label>
