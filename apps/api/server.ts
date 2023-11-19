@@ -9,6 +9,7 @@ import { PrismaClient } from '@prisma/client';
 import cors from '@fastify/cors';
 
 import { userRoutes } from './routes/user';
+import { eventRoutes } from './routes/event';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 export const prisma = new PrismaClient();
@@ -30,6 +31,7 @@ server.register(cors, {
 });
 
 server.register(userRoutes);
+server.register(eventRoutes, { prefix: '/event' });
 
 server.get('/status', async () => ({ status: 'ok' }));
 
