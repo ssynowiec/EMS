@@ -109,6 +109,7 @@ export const authOptions: NextAuthOptions = {
 							status: 'ACTIVE',
 						},
 					});
+					g;
 				}
 			}
 
