@@ -1,6 +1,7 @@
 import { Step1 } from '@/components/addNewEventForm/step1/Step1';
 import { Step2 } from '@/components/addNewEventForm/step2/Step2';
 import { useFormContext } from 'react-hook-form';
+import { env } from '../../env.d.mjs';
 
 interface AddNewEventFormProps {
 	step: number;
@@ -9,14 +10,15 @@ interface AddNewEventFormProps {
 type Inputs = {
 	eventName: string;
 	eventUrl: string;
-	eventThumbnail?: File;
 	eventDescription?: string;
-	eventOnlineLocation?: string;
-	eventLocation?: string;
+	eventThumbnail?: File;
 	eventStartDate?: Date;
 	eventStartTime?: string;
 	eventEndDate?: Date;
 	eventEndTime?: string;
+	eventOnlineLocation?: string;
+	eventLocation?: string;
+	organizer: string;
 };
 
 const onSubmit = async (data: Inputs) => {
@@ -40,24 +42,34 @@ const onSubmit = async (data: Inputs) => {
 		// const imgJson = await image.json();
 
 		// const thumbnailUrl = imgJson.secure_url;
-		const thumbnailUrl =
-			'https://res.cloudinary.com/stasyn-ems/image/upload/v1700053031/event-thumb/aaa.png';
-		console.log(data);
 	}
 
-	// const event = await fetch(`${env.NEXT_PUBLIC_API_URL}/events/create`, {
-	// 	method: 'POST',
-	// 	body: JSON.stringify({
-	// 		name: data.eventName,
-	// 		slug: data.eventUrl,
-	// 		thumbnail: data.eventThumbnail,
-	// 		description: data.eventDescription,
-	// 	}),
-	// 	headers: {
-	// 		'Content-Type': 'application/json',
-	// 	},
-	// });
-	console.log('event');
+	console.log(data);
+	const thumbnailUrl =
+		'https://res.cloudinary.com/stasyn-ems/image/upload/v1700053031/event-thumb/aaa.png';
+
+	const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/event/create`, {
+		method: 'POST',
+		body: JSON.stringify({
+			name: data.eventName,
+			slug: data.eventUrl,
+			thumbnail: thumbnailUrl,
+			startDate: data.eventStartDate,
+			endDate: data.eventEndDate,
+			startTime: data.eventStartTime,
+			endTime: data.eventEndTime,
+			onlineLocation: data.eventOnlineLocation,
+			offlineLocation: data.eventLocation,
+			organizer: data.organizer,
+		}),
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const json = await res.json();
+
+	console.log(json);
 };
 
 export const AddNewEventForm = ({ step }: AddNewEventFormProps) => {
