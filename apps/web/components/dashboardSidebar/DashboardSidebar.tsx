@@ -35,10 +35,19 @@ const mainSidebarLinks: SidebarLink[] = [
 	},
 ];
 
+const organizerSidebarLinks: SidebarLink[] = [
+	{ href: '/my-events', title: 'My events' },
+];
+
 const sidebarSections = [
 	{
 		title: '',
 		links: mainSidebarLinks,
+		permissions: ['ADMIN', 'USER'],
+	},
+	{
+		title: 'Organizer',
+		links: organizerSidebarLinks,
 		permissions: ['ADMIN', 'USER'],
 	},
 	{
