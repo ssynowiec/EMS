@@ -28,7 +28,7 @@ export const Step2 = () => {
 
 	const users = [
 		{
-			id: 1,
+			id: user?.id,
 			name: user?.name,
 			email: user?.email,
 			avatar: user?.image,
@@ -38,13 +38,18 @@ export const Step2 = () => {
 	return (
 		<>
 			<Select
+				{...register('organizer')}
+				onSelectionChange={(e) =>
+					setValue('organizer', e.values().next().value)
+				}
 				items={users}
 				label="Organizer"
 				labelPlacement="outside"
 				placeholder="Select organizer"
 				className="max-w-xs"
-				selectedKeys={'all'}
-				isDisabled={true}
+				isRequired={true}
+				// selectedKeys={'all'}
+				// isDisabled={true}
 				disallowEmptySelection={true}
 				classNames={{
 					// label: 'group-data-[filled=true]:-translate-y-5',
