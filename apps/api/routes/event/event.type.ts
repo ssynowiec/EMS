@@ -14,4 +14,9 @@ export const AddEventSchema = Type.Object({
 	organizer: Type.String(),
 });
 
+export const GetEventBySlugSchema = Type.Object({
+	slug: Type.String(),
+});
+
 export type AddEventType = Static<typeof AddEventSchema>;
+export type GetEventBySlugType = Static<typeof GetEventBySlugSchema>;

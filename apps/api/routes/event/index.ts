@@ -1,10 +1,22 @@
 import { type FastifyTypebox, prisma } from '../../server';
-import { AddEventSchema } from './event.type';
+import { AddEventSchema, GetEventBySlugSchema } from './event.type';
 
 export const eventRoutes = async (server: FastifyTypebox) => {
 	server.get('/all', async () => {
 		return await prisma.event.findMany();
 	});
+
+	server.get(
+		'/:slug',
+		{ schema: { params: GetEventBySlugSchema } },
+		async (request, reply) => {
+			const slug = request.params.slug;
+			// if (!event) {
+			// 	return reply.status(404).send({ message: 'Event not found' });
+			// }
+			return await prisma.event.findUnique({ where: { slug } });
+		},
+	);
 
 	server.post(
 		'/create',
