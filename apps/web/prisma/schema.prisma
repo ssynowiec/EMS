@@ -19,6 +19,12 @@ enum Status {
   UNVERIFIED
 }
 
+enum EventStatus {
+  PUBLISHED
+  DRAFT
+  DELETED
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -47,26 +53,59 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
-  role          Role      @default(USER)
+  email         String?     @unique
+  role          Role        @default(USER)
   emailVerified DateTime?
-  status        Status    @default(UNVERIFIED)
+  status        Status      @default(UNVERIFIED)
   password      String?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   accounts      Account[]
   sessions      Session[]
+  events        Event[]     @relation("Organizer")
+  // attendees     Event[]     @relation("Attendees")
+  Attendees     Attendees[]
 }
 
 model VerificationToken {
-  identifier String @default(uuid())
+  identifier String   @default(uuid())
   token      String   @unique
   expires    DateTime
   used       Boolean  @default(false)
   userId     String
 
   @@unique([identifier, token])
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  status      EventStatus @default(DRAFT)
+  name        String
+  slug        String      @unique
+  description String?
+  thumbnail       String?
+  startDate        DateTime
+  endDate          DateTime
+  startTime        String
+  endTime          String
+  onlineLocation    String?
+  offlineLocation   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  organizer   User        @relation("Organizer", fields: [organizerID], references: [id], onDelete: Cascade)
+  organizerID String
+  // attendees   User[]      @relation("Attendees")
+  Attendees   Attendees[]
+}
+
+model Attendees {
+  eventId String
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@id([eventId, userId])
 }

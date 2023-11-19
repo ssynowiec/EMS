@@ -84,10 +84,15 @@ model Event {
   id          String      @id @default(uuid())
   status      EventStatus @default(DRAFT)
   name        String
+  slug        String      @unique
   description String?
-  image       String?
-  date        DateTime
-  location    String
+  thumbnail       String?
+  startDate        DateTime
+  endDate          DateTime
+  startTime        String
+  endTime          String
+  onlineLocation    String?
+  offlineLocation   String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   organizer   User        @relation("Organizer", fields: [organizerID], references: [id], onDelete: Cascade)
