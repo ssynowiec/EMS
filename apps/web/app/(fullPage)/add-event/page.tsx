@@ -36,17 +36,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 const validationStep1 = yup.object({
 	eventName: yup.string().required('Event name is required'),
 	eventUrl: yup.string().required('Event URL is required'),
-	eventThumbnail: yup.mixed(),
 	eventDescription: yup.string(),
+	eventThumbnail: yup.mixed(),
 });
 
 const validationStep2 = yup.object({
-	eventOnlineLocation: yup.string(),
-	eventLocation: yup.string(),
 	eventStartDate: yup.date(),
 	eventStartTime: yup.string(),
 	eventEndDate: yup.date(),
 	eventEndTime: yup.string(),
+	eventOnlineLocation: yup.string(),
+	eventLocation: yup.string(),
+	organizer: yup.string(),
 });
 
 const validationSchema = [validationStep1, validationStep2];
@@ -56,12 +57,12 @@ type Inputs = {
 	eventUrl: string;
 	eventThumbnail?: File;
 	eventDescription?: string;
-	eventOnlineLocation?: string;
-	eventLocation?: string;
 	eventStartDate?: Date;
 	eventStartTime?: string;
 	eventEndDate?: Date;
 	eventEndTime?: string;
+	eventOnlineLocation?: string;
+	eventLocation?: string;
 };
 
 const AddNewEventPage = () => {
