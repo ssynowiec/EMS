@@ -16,23 +16,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-// const validationSchema = [
-// 	yup.object({
-// 		eventName: yup.string().required('Event name is required'),
-// 		eventUrl: yup.string().required('Event URL is required'),
-// 		eventThumbnail: yup.mixed(),
-// 		eventDescription: yup.string(),
-// 	}),
-// 	yup.object({
-// 		eventOnlineLocation: yup.string(),
-// 		eventLocation: yup.string(),
-// 		eventStartDate: yup.date(),
-// 		eventStartTime: yup.string(),
-// 		eventEndDate: yup.date(),
-// 		eventEndTime: yup.string(),
-// 	}),
-// ];
-
 const validationStep1 = yup.object({
 	eventName: yup.string().required('Event name is required'),
 	eventUrl: yup.string().required('Event URL is required'),
@@ -41,12 +24,13 @@ const validationStep1 = yup.object({
 });
 
 const validationStep2 = yup.object({
+	eventType: yup.string().default('hybrid'),
+	eventOnlineLocation: yup.string(),
+	eventLocation: yup.string(),
 	eventStartDate: yup.date(),
 	eventStartTime: yup.string(),
 	eventEndDate: yup.date(),
 	eventEndTime: yup.string(),
-	eventOnlineLocation: yup.string(),
-	eventLocation: yup.string(),
 	organizer: yup.string(),
 });
 
@@ -57,12 +41,14 @@ type Inputs = {
 	eventUrl: string;
 	eventThumbnail?: File;
 	eventDescription?: string;
+	eventType: string;
 	eventStartDate?: Date;
 	eventStartTime?: string;
 	eventEndDate?: Date;
 	eventEndTime?: string;
 	eventOnlineLocation?: string;
 	eventLocation?: string;
+	organizer?: string;
 };
 
 const AddNewEventPage = () => {

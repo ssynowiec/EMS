@@ -10,14 +10,18 @@ export const Step2 = () => {
 	const {
 		register,
 		setValue,
+		getValues,
 		formState: { errors },
 	} = useFormContext();
 
 	const session = useSession();
 	const user = session?.data?.user;
 
-	const [eventType, setEventType] = useState('hybrid');
+	const [eventType, setEventType] = useState(
+		getValues('eventType') || 'hybrid',
+	);
 	const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+		setValue('eventType', e.target.value);
 		setEventType(e.target.value);
 	};
 
@@ -40,7 +44,7 @@ export const Step2 = () => {
 			<Select
 				{...register('organizer')}
 				onSelectionChange={(e) =>
-					setValue('organizer', e.values().next().value)
+					e !== 'all' && setValue('organizer', e.values().next().value)
 				}
 				items={users}
 				label="Organizer"
@@ -48,7 +52,7 @@ export const Step2 = () => {
 				placeholder="Select organizer"
 				className="max-w-xs"
 				isRequired={true}
-				// selectedKeys={'all'}
+				selectedKeys={'all'}
 				// isDisabled={true}
 				disallowEmptySelection={true}
 				classNames={{
@@ -120,7 +124,9 @@ export const Step2 = () => {
 				className="max-w-xs"
 				selectedKeys={[eventType]}
 				disallowEmptySelection={true}
-				onChange={handleSelectionChange}
+				{...register('eventType', {
+					onChange: handleSelectionChange,
+				})}
 			>
 				<SelectItem key="online" value="online">
 					online
@@ -141,8 +147,9 @@ export const Step2 = () => {
 					description="for example: link to the event on Zoom, Google Meet, YouYube live etc."
 					isRequired={true}
 					isInvalid={Boolean(errors.eventOnlineLocation)}
-					errorMessage={errors.eventOnlineLocation?.message}
-					{...register('eventOnlineLocation')}
+					errorMessage={errors.eventOnlineLocation?.message?.toString()}
+					defaultValue={getValues('eventOnlineLocation') || ''}
+					{...register('eventOnlineLocation', { required: true })}
 				/>
 			)}
 			{(eventType === 'offline' || eventType === 'hybrid') && (
@@ -152,15 +159,22 @@ export const Step2 = () => {
 					placeholder="Warsaw, Poland"
 					isRequired={true}
 					isInvalid={Boolean(errors.eventLocation)}
-					errorMessage={errors.eventLocation?.message}
-					{...register('eventLocation')}
+					errorMessage={errors.eventLocation?.message?.toString()}
+					defaultValue={getValues('eventLocation') || ''}
+					{...register('eventLocation', { required: true })}
 				/>
 			)}
 
-			<label className="text-small font-medium">Event date</label>
+			<label className="text-small font-medium after:content-['*'] after:text-danger after:ml-0.5">
+				Event date
+			</label>
 			<DateRangePicker
 				placeholder="Select start and end date"
 				{...register('eventStartDate')}
+				defaultValue={{
+					from: getValues('eventStartDate'),
+					to: getValues('eventEndDate'),
+				}}
 				onValueChange={handleDateChange}
 				enableSelect={false}
 				enableYearNavigation={true}
@@ -173,7 +187,8 @@ export const Step2 = () => {
 				labelPlacement="outside"
 				placeholder="HH:MM"
 				isInvalid={Boolean(errors.eventStartTime)}
-				errorMessage={errors.eventStartTime?.message}
+				errorMessage={errors.eventStartTime?.message?.toString()}
+				defaultValue={getValues('eventStartTime') || ''}
 				{...register('eventStartTime')}
 			/>
 
@@ -183,7 +198,8 @@ export const Step2 = () => {
 				labelPlacement="outside"
 				placeholder="HH:MM"
 				isInvalid={Boolean(errors.eventEndTime)}
-				errorMessage={errors.eventEndTime?.message}
+				errorMessage={errors.eventEndTime?.message?.toString()}
+				defaultValue={getValues('eventEndTime') || ''}
 				{...register('eventEndTime')}
 			/>
 			<Button type="submit">Log data</Button>

@@ -1,13 +1,39 @@
 import { Input, Textarea } from '@nextui-org/react';
 import { DndFile } from '@/components/dndFile/DndFile';
 import { useDropzone } from 'react-dropzone';
-import { useCallback, useState } from 'react';
+import { type ChangeEvent, useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { env } from '../../../env.d.mjs';
+
+const validateSlug = async (value: string) => {
+	if (!value) return 'Event URL is required';
+
+	const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/event/${value}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const data = await res.json();
+
+	if (!data) {
+		if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+			return 'Event URL must contain only lowercase alphanumeric characters or dashes';
+		if (value.length > 50) return 'Event URL must be less than 50 characters';
+		return true;
+	} else {
+		return 'Event URL is already taken';
+	}
+};
 
 export const Step1 = () => {
 	const {
 		register,
 		setValue,
+		setError,
+		clearErrors,
+		getValues,
 		formState: { errors },
 	} = useFormContext();
 
@@ -31,6 +57,16 @@ export const Step1 = () => {
 		[setValue],
 	);
 
+	const handleSlugChange = async (e: ChangeEvent<HTMLInputElement>) => {
+		clearErrors('eventUrl');
+		const isValid = await validateSlug(e.target.value);
+		if (isValid === true) {
+			setValue('eventUrl', e.target.value);
+		} else {
+			setError('eventUrl', { message: isValid });
+		}
+	};
+
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		accept: {
@@ -49,8 +85,9 @@ export const Step1 = () => {
 				placeholder="Event test"
 				isRequired={true}
 				isInvalid={Boolean(errors.eventName)}
-				errorMessage={errors.eventName?.message}
-				{...register('eventName')}
+				errorMessage={errors.eventName?.message?.toString()}
+				defaultValue={getValues('eventName') || ''}
+				{...register('eventName', { required: true })}
 			/>
 			<Input
 				label="Event URL"
@@ -64,13 +101,16 @@ export const Step1 = () => {
 				}
 				isRequired={true}
 				isInvalid={Boolean(errors.eventUrl)}
-				errorMessage={errors.eventUrl?.message}
-				{...register('eventUrl')}
+				errorMessage={errors.eventUrl?.message?.toString()}
+				defaultValue={getValues('eventUrl') || ''}
+				{...register('eventUrl', {
+					required: true,
+					onChange: handleSlugChange,
+				})}
 			/>
 
 			<DndFile
 				label="Event thumbnail"
-				register={register}
 				getInputProps={getInputProps}
 				getRootProps={getRootProps}
 				isDragActive={isDragActive}
@@ -82,7 +122,8 @@ export const Step1 = () => {
 				labelPlacement="outside"
 				placeholder="My event is the best event in the world!"
 				isInvalid={Boolean(errors.eventDescription)}
-				errorMessage={errors.eventDescription?.message}
+				errorMessage={errors.eventDescription?.message?.toString()}
+				defaultValue={getValues('eventDescription') || ''}
 				{...register('eventDescription')}
 			/>
 		</>
