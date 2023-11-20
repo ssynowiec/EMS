@@ -1,7 +1,7 @@
 import { Input, Textarea } from '@nextui-org/react';
 import { DndFile } from '@/components/dndFile/DndFile';
 import { useDropzone } from 'react-dropzone';
-import { type ChangeEvent, useCallback, useState } from 'react';
+import { type ChangeEvent, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { env } from '../../../env.d.mjs';
 
@@ -27,7 +27,7 @@ const validateSlug = async (value: string) => {
 	}
 };
 
-export const Step1 = () => {
+export const Step1 = ({ eventThumbnail, setEventThumbnail }) => {
 	const {
 		register,
 		setValue,
@@ -36,10 +36,6 @@ export const Step1 = () => {
 		getValues,
 		formState: { errors },
 	} = useFormContext();
-
-	const [eventThumbnail, setEventThumbnail] = useState<
-		string | ArrayBuffer | null
-	>('');
 
 	const onDrop = useCallback(
 		(acceptedFiles: File[]) => {
@@ -54,7 +50,7 @@ export const Step1 = () => {
 
 			file.readAsDataURL(acceptedFiles[0]);
 		},
-		[setValue],
+		[setEventThumbnail, setValue],
 	);
 
 	const handleSlugChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +68,7 @@ export const Step1 = () => {
 		accept: {
 			'image/png': [],
 			'image/jpeg': [],
+			'image/webp': [],
 		},
 		maxSize: 10485760,
 		multiple: false,
@@ -116,6 +113,9 @@ export const Step1 = () => {
 				isDragActive={isDragActive}
 				fileThumbnail={eventThumbnail}
 			/>
+			<p className="text-tiny text-foreground-400">
+				.webp, .png, .jpg, .jpeg, preferred image size: 1920x1080
+			</p>
 
 			<Textarea
 				label="Event description"
