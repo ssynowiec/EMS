@@ -24,22 +24,22 @@
     "@fastify/cors": "^8.4.1",
     "@fastify/sensible": "^5.5.0",
     "@fastify/type-provider-typebox": "^3.5.0",
-    "@prisma/client": "5.5.2",
-    "@sinclair/typebox": "^0.31.22",
+    "@prisma/client": "5.6.0",
+    "@sinclair/typebox": "^0.31.28",
     "bcrypt": "^5.1.1",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "fastify": "^4.24.3",
     "fastify-cli": "^5.9.0",
     "fastify-plugin": "^4.5.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^20.8.10",
+    "@types/node": "^20.9.2",
     "concurrently": "^8.2.2",
     "eslint-config-custom": "workspace:*",
-    "prisma": "^5.5.2",
-    "tap": "^16.3.9",
-    "tsx": "^3.14.0",
+    "prisma": "^5.6.0",
+    "tap": "^18.6.1",
+    "tsx": "^4.1.4",
     "typescript": "^5.2.2"
   }
 }
