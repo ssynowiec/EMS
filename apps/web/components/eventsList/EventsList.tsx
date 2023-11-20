@@ -25,7 +25,11 @@ export const EventsList = () => {
 	return (
 		<ul>
 			{events.map((event) => (
-				<EventCard key={event.id} event={event} />
+				<li key={event.id}>
+					<a href={`/${event.slug}`}>
+						<EventCard event={event} />
+					</a>
+				</li>
 			))}
 		</ul>
 	);
