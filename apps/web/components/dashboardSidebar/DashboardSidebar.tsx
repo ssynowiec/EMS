@@ -7,6 +7,8 @@ import { SidebarSection } from '../sidebarSection/SidebarSection';
 import { SidebarItem } from '../sidebarItem/SidebarItem';
 import { SidebarFooter } from '../sidebarFooter/sidebarFooter';
 import { useSession } from 'next-auth/react';
+import clsx from 'clsx';
+import { useSidebarContext } from 'app/(dashboard)/sidebarContext';
 
 export type SidebarLink = {
 	href: string;
@@ -59,10 +61,19 @@ const sidebarSections = [
 
 export const DashboardSidebar = () => {
 	const session = useSession();
+	const { isSidebarOpen, closeSidebar } = useSidebarContext();
 	const userRole = session?.data?.user?.role;
 
+	const closeSidebarClass = 'hidden md:flex';
+	const openSidebarClass = 'w-full z-50';
+
 	return (
-		<aside className="flex flex-col items-center h-full sticky top-0 bg-white w-2/12">
+		<aside
+			className={clsx(
+				isSidebarOpen ? openSidebarClass : closeSidebarClass,
+				'flex flex-col items-center h-full sticky top-0 bg-white md:w-2/12',
+			)}
+		>
 			<div>
 				<Link href="/">
 					<Image src="/EMS.png" alt="EMS logo" width="100" height="100" />
