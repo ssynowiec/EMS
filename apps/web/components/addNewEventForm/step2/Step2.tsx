@@ -179,6 +179,7 @@ export const Step2 = () => {
 				enableSelect={false}
 				enableYearNavigation={true}
 				minDate={new Date()}
+				className="z-40"
 			/>
 
 			<Input
