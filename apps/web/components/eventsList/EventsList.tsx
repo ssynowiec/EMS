@@ -26,7 +26,7 @@ export const EventsList = () => {
 		<ul>
 			{events.map((event) => (
 				<li key={event.id}>
-					<a href={`/${event.slug}`}>
+					<a href={`/my-event/${event.slug}`}>
 						<EventCard event={event} />
 					</a>
 				</li>
