@@ -52,6 +52,7 @@ const EventOrganizerLayout = async ({
 	}
 
 	const sidebarSections = [
+		{ title: `${event.name}`, links: [], permissions: ['ADMIN', 'USER'] },
 		{
 			title: '',
 			links: mainSidebarLinks,
