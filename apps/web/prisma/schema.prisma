@@ -98,6 +98,7 @@ model Event {
   organizer   User        @relation("Organizer", fields: [organizerID], references: [id], onDelete: Cascade)
   organizerID String
   // attendees   User[]      @relation("Attendees")
+  maxAttendees Int
   Attendees   Attendees[]
 }
 
