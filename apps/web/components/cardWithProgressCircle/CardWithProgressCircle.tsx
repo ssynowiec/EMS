@@ -1,7 +1,6 @@
 'use client';
 
 import { Flex, ProgressCircle, Text } from '@tremor/react';
-import clsx from 'clsx';
 import { Card, CardBody } from '@nextui-org/react';
 
 interface PercentageRegisteredUsersProps {
@@ -18,7 +17,7 @@ export const CardWithProgressCircle = ({
 	const percentage = (value / maxValue) * 100;
 
 	return (
-		<Card className={clsx('w-full md:w-1/4 font-bold')} shadow="md">
+		<Card className="w-full font-bold" shadow="md">
 			<CardBody className="flex flex-row justify-between items-center">
 				<Flex className="space-x-5" justifyContent="center">
 					<ProgressCircle
