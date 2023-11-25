@@ -14,7 +14,7 @@ export const CardWithProgressCircle = ({
 	maxValue,
 	title,
 }: PercentageRegisteredUsersProps) => {
-	const percentage = Math.ceil((value / maxValue) * 100);
+	const percentage = maxValue === 0 ? 0 : Math.ceil((value / maxValue) * 100);
 
 	return (
 		<Card className="w-full font-bold" shadow="md">
