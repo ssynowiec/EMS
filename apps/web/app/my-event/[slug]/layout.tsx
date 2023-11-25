@@ -41,12 +41,20 @@ const EventOrganizerLayout = async ({
 				title: 'Publish event',
 				color: 'purple',
 			},
+			{
+				href: `/my-event/${event.slug}`,
+				title: 'Event dashboard',
+			},
 		];
 	} else {
 		mainSidebarLinks = [
 			{
 				href: '/my-events',
 				title: '<- Back to events',
+			},
+			{
+				href: `/my-event/${event.slug}`,
+				title: 'Event dashboard',
 			},
 		];
 	}
