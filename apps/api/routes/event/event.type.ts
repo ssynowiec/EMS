@@ -18,5 +18,12 @@ export const GetEventBySlugSchema = Type.Object({
 	slug: Type.String(),
 });
 
+export const GetEventParticipantsByEventIdSchema = Type.Object({
+	id: Type.String(),
+});
+
 export type AddEventType = Static<typeof AddEventSchema>;
 export type GetEventBySlugType = Static<typeof GetEventBySlugSchema>;
+export type GetEventParticipantsByEventIdType = Static<
+	typeof GetEventParticipantsByEventIdSchema
+>;

@@ -1,5 +1,9 @@
 import { type FastifyTypebox, prisma } from '../../server';
-import { AddEventSchema, GetEventBySlugSchema } from './event.type';
+import {
+	AddEventSchema,
+	GetEventBySlugSchema,
+	GetEventParticipantsByEventIdSchema,
+} from './event.type';
 
 export const eventRoutes = async (server: FastifyTypebox) => {
 	server.get('/all', async () => {
@@ -11,10 +15,28 @@ export const eventRoutes = async (server: FastifyTypebox) => {
 		{ schema: { params: GetEventBySlugSchema } },
 		async (request, reply) => {
 			const slug = request.params.slug;
-			// if (!event) {
-			// 	return reply.status(404).send({ message: 'Event not found' });
-			// }
-			return await prisma.event.findUnique({ where: { slug } });
+
+			return await prisma.event.findUnique({
+				where: { slug },
+				include: {
+					_count: {
+						select: { Attendees: true },
+					},
+				},
+			});
+		},
+	);
+
+	server.get(
+		'/:id/participants',
+		{ schema: { params: GetEventParticipantsByEventIdSchema } },
+		async (request, reply) => {
+			const id = request.params.id;
+
+			return await prisma.attendees.findMany({
+				where: { eventId: id },
+				include: { user: true },
+			});
 		},
 	);
 
